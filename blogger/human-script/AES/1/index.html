@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	
+<head>
+	<title>AES Encrypt and Decrypt Algorithm</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	<link rel="stylesheet" type="text/css"  href="css/style.css" media="screen" />
+	<!--script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" /-->
+	<script type="text/javascript" src="js/jquery-1.7.2.js"></script>	
+	<script type="text/javascript" src="source/AES.js"></script>
+	
+	<!-- auto growing textarea -->
+	<script type="text/javascript" src="js/jquery.autosize.js"></script>
+	
+	<script type="text/javascript">
+		$(document).ready(function (){
+			
+			// auto grow textarea
+			$('textarea[name="input"], textarea[name="output"]').autosize();
+			
+			$('button[name="encrypt"], button[name="decrypt"]').click(function (){
+				var type = $(this).data('type');
+				var input = $('textarea[name="input"]');
+				var password = $('input[name="password"]');
+				var output = $('textarea[name="output"]');
+				
+				if( ! input.val() ){
+					alert('Input value is empty!');
+					input.focus();
+					return false;
+				}
+				
+				if ( ! password.val() ){
+					alert('Password is empty!');
+					password.focus();
+					return false;
+				}
+				
+				if( type == "encrypt" ){
+					var convertedtxt = Aes.Ctr.encrypt(input.val(), password.val(), 256);
+				}
+				if( type == "decrypt" ){
+					var convertedtxt = Aes.Ctr.decrypt(input.val(), password.val(), 256);
+				}
+				// output text
+				output.val(convertedtxt);
+			});	
+		});
+	</script>
+</head>
+
+<body>
+	<div id="wrapper">
+		<div id="content">
+			<table class="aes">
+				<tr class="ajust_height">
+					<td>
+						<textarea name="input" placeholder="Enter your encrypting or decrypting text!"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label class="passwordlbl" for="password">Password: </label>
+						<input class="password" type="password" name="password" id="password" placeholder="Enter your password to encrypt! or decrypt!"/>
+						<button class="btn" type="button" data-type="encrypt" name="encrypt">Encrypt</button>
+						<button class="btn" type="button" data-type="decrypt" name="decrypt">Decrypt</button>
+					</td>
+				</tr>
+				<tr class="ajust_height">
+					<td>
+						<textarea name="output" placeholder="Output will appear in here!"></textarea>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<!-- #wrapper -->
+</body>
+
+</html>

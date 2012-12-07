@@ -1,0 +1,92 @@
+html, body
+{
+    height: 100%;
+    min-width: 100%;
+    position: absolute;
+}
+.wrapper
+{
+    min-height: 100%;
+    position: relative;
+}
+.content
+{
+    padding: 0 44px;
+}
+.main
+{
+    margin: 0 auto;
+    padding-bottom: 100px;
+    padding-top: 23px;
+    width: 650px;
+    border: 1px solid black;
+}
+/****************REGISTRATION FORM**********************/
+.reg-form
+{
+    border: 0px solid black;
+}
+.reg_td_header
+{
+    border: 0px solid black;
+    padding: 4px 10px 0px 10px;
+    text-align: left;
+    vertical-align: top;
+    width: 100px;
+}
+.reg_td_input
+{
+    border: 0px solid black;
+    width: 0px;
+    padding-bottom: 10px;
+}
+.reg_td_input input.error, select.error
+{
+    border: 1px solid red;
+}
+.error_status
+{
+    border: 0px solid black;
+    color: Red;
+    padding: 4px 10px 0px 10px;
+    text-align: left;
+    vertical-align: top;
+}
+.reg_td_button
+{
+    text-align: right;
+}
+.reg_text_field
+{
+    border: 1px solid #BDC7D8;
+    font-family: 'lucida grande',tahoma,verdana,arial,sans-serif;
+    font-size: 13px;
+    height: 19px;
+    width: 150px;
+}
+.reg_select_field
+{
+    border: 1px solid #BDC7D8;
+    font-family: 'lucida grande',tahoma,verdana,arial,sans-serif;
+    font-size: 13px;
+    height: 19px;
+    width: 150px;
+}
+label.radio_label
+{
+    text-align: center;
+    vertical-align: bottom;
+}
+/****************REGISTRATION FORM**********************/s
+.clearfix:after
+{
+    clear: both;
+    content: ".";
+    display: block;
+    font-size: 0;
+    height: 0;
+    visibility: hidden;
+}
+* html .clearfix
+{
+}

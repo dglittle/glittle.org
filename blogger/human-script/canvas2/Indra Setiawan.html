@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://dl.dropbox.com/u/16505421/odesk/index-RC.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+	<title>Hello World</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
+</head><style type="text/css"></style>
+<body>
+<script>
+	$(document).ready(function() {
+		// create bottom canvas
+		var $canvas_bottom = $('<canvas/>').attr('width', 400).attr('height', 400).css({position: 'absolute', left: '0', top: '0', border: '1px solid'});
+		var $context_bottom = $canvas_bottom[0].getContext("2d");
+		$('body').append($canvas_bottom);
+		
+		// create top canvas
+		var $canvas_top = $('<canvas/>').attr('width', 400).attr('height', 400).css({position: 'absolute', left: '0', top: '0'});
+		var $context_top = $canvas_top[0].getContext("2d");
+		$context_top.save();
+		$('body').append($canvas_top);
+
+		function clearCanvas(canvas, context) {
+			context.setTransform(1, 0, 0, 1, 0, 0);
+			context.clearRect(0, 0, canvas.width(), canvas.height());
+			context.restore();
+		}
+
+		$canvas_top.mousemove(function (e) {
+			e.preventDefault();
+			clearCanvas($canvas_top, $context_top);
+			
+			$context_top.beginPath();
+			$context_top.arc(e.clientX, e.clientY, 10, 0, Math.PI*2);
+			$context_top.closePath();
+			$context_top.globalAlpha = 0.5;
+			$context_top.fillStyle = '#FF0000';
+			$context_top.fill();
+		})
+
+		function mouseCapture(div, down, move, up) {
+		    div.mousedown(function (e) {
+		        e.preventDefault()
+		        function upWrapper(e) {
+		            $(document).unbind("mousemove", move)
+		            $(document).unbind("mouseup", upWrapper)
+		            up(e)
+		        }
+		        $(document).mousemove(move).mouseup(upWrapper)
+		        down(e)
+		    })
+		}
+
+		function drawCircle(options) {
+			$context_bottom.beginPath();
+			$context_bottom.arc(options.x, options.y, 10, 0, Math.PI*2);
+			$context_bottom.closePath();
+			$context_bottom.fillStyle = '#FF0000';
+			$context_bottom.fill();
+		}
+
+		function onMouseDown (e) {
+			drawCircle({x: e.clientX, y: e.clientY});
+		}
+
+		function onMouseMove (e) {
+			drawCircle({x: e.clientX, y: e.clientY});
+		}
+
+		function onMouseUp () {
+		}
+
+		mouseCapture($canvas_top, onMouseDown, onMouseMove, onMouseUp);
+	});
+</script>
+
+<canvas width="400" height="400" style="position: absolute; left: 0px; top: 0px; border: 1px solid; "></canvas><canvas width="400" height="400" style="position: absolute; left: 0px; top: 0px; "></canvas></body></html>

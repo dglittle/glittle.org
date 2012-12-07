@@ -1,0 +1,21 @@
+function next_6am(date){
+ var hr = new Date(date).getHours();
+ var day = new Date(date).getDate();
+
+ document.writeln("Input== "+date+ "......................... Output==");
+ if(hr==12 || hr<6){
+ var today = new Date();
+  today.setHours(06);
+  today.setMinutes(00);
+  today.setSeconds(00);
+  document.writeln(new Date(today));
+  }else{
+  var tomorrow = new Date();
+  tomorrow.setHours(06);
+  tomorrow.setMinutes(00);
+  tomorrow.setSeconds(00);
+  tomorrow.setDate(day+1);
+document.writeln(new Date(tomorrow));
+  }
+
+}

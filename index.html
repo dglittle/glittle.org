@@ -1,0 +1,265 @@
+<html>
+<head> 
+<title>Greg Little</title>
+<meta name="viewport" content="initial-scale=1.0" />
+<style>
+
+.fill {
+    width: 100%;
+    height: 100%;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th, td  {
+    padding: 0;
+}
+    
+body {
+    font-family: Sans-Serif;
+}
+
+.sidebar {
+}
+
+.content {
+}
+
+.sidebar .block {
+    margin-left: 20px;
+    margin-top: 10px;
+}
+
+.sidebar .header {
+    font-weight: bold;
+}
+
+.content .title {
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 20px;
+    margin-top: 5px;
+}
+
+.subtle {
+    font-size: x-small;
+    color: grey;
+}
+
+</style>
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-3118247-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head> 
+<body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="js/myutil.js"></script>
+<script src="js/hashchange.js"></script>
+
+<script src="odesk.js"></script>
+
+<script src="data.js"></script>
+<script>
+
+var links = {
+    "blog" : "http://realgl.blogspot.com/",
+    "facebook" : "http://www.facebook.com/d.greg.little",
+    "twitter" : "http://twitter.com/#!/thought_stream",
+    "last.fm" : "http://www.last.fm/user/glittle",
+    "flickr" : "http://www.flickr.com/photos/22808956@N00",
+    "github" : "https://github.com/dglittle"
+}
+
+function lastFm(url, params, callback) {
+    params.format = "json"
+    params.callback = randomIdentifier(20)
+    eval(params.callback + ' = function (o) { callback(o) }')
+    var s = []
+    foreach(params, function (e, k) {
+        s.push(escapeUrl(k) + '=' + escapeUrl(e))
+    })
+    $('body').append($('<script/>').attr('src', url + '?' + s.join('&'))) 
+}
+
+var reloadTimer = 0
+
+function loadFragment(f) {
+    if (f != getFragment()) {
+        setFragment(f)
+        return
+    }
+    
+    clearTimeout(reloadTimer)
+    
+    f = f.replace(/-/g, ' ')
+    
+    if (f == "odesk work") {
+        $('.content').empty().append($('<div class="title"/>').text('odesk work')).append(drawODesk())
+    } else if (f == "books") {
+        var c = $('.content')
+        c.empty()
+        c.append($('<iframe src="bookshelf.html" frameBorder="0" class="fill">'))
+    } else if (f == "music") {
+        reloadTimer = setTimeout(function () {
+            loadFragment('music')
+        }, 1000 * 60 * 20)
+        
+        var c = $('.content')
+        c.empty()
+        c.append('<div class="title">music</div>')
+        var d = $('<div/>')
+        c.append(d)
+        
+        var input = $('<input type="text"/>')
+        c.append($('<div style="width:20px;height:20px"/>'))
+        c.append(input)
+        input.hide()
+        function copyName(s) {
+            input.show().val(s).select().focus()
+        }
+        
+        function addTrack(p, d, t) {
+            var album = t.album['#text']
+            if (album != p.prevAlbum) {
+                p.prevAlbum = album
+                p.prevCount = 0
+            } else {
+                p.prevCount++
+            }
+            if (p.prevCount == 5) {
+                var dd = $('<div style="width:64px;height:64px; float:left"/>').click(function () {
+                    copyName(t.artist['#text'])
+                })
+                d.append(dd)
+                
+                var src = jsonPath(t.image, "$..[?(@.size == 'medium')]['#text']")[0]
+                if (src) {
+                    dd.append($('<img>').attr('src', src).attr("width", "64px"))
+                }
+            }
+        }
+        
+        function loadTracks(p, d, page, callback) {
+            lastFm("http://ws.audioscrobbler.com/2.0/", {
+                method : "user.getrecenttracks",
+                user : "glittle",
+                page : page,
+                limit : "200",
+                api_key : "80aa6bead950f13f9d46323920294042"
+            }, function (o) {
+                foreach(o.recenttracks.track, function (e) {
+                    addTrack(p, d, e)
+                })
+                
+                if (callback)
+                    callback(o)
+            })
+        }
+        
+        var d1 = $('<div/>')
+        d1.append($('<div class="subtle"/>').text("recent"))
+        var d2 = $('<div/>')
+        d2.append($('<div class="subtle"/>').text("random subsequence"))
+        d.append(d1)
+        d.append($('<div style="width:20px;height:20px;clear:both"/>'))
+        d.append(d2)
+        d.append($('<div style="width:20px;height:20px;clear:both"/>'))
+
+        var p1 = {
+            prevAlbum : "",
+            prevCount : 0
+        }
+        var p2 = {
+            prevAlbum : "",
+            prevCount : 0
+        }
+        loadTracks(p1, d1, 1, function (o) {
+            loadTracks(p1, d1, 2, function (o) {
+                loadTracks(p1, d1, 3, function (o) {
+                    loadTracks(p1, d1, 4)
+                })                
+            })
+            var ri = randomIndex(1 * o.recenttracks['@attr'].totalPages - 1) + 1
+            loadTracks(p2, d2, ri)
+            // known bug: this might get added first, but we don't care too much 
+            loadTracks(p2, d2, ri + 1)
+        })
+    } else {
+        var d = data[f]
+        if (d) {
+            var func = data[f + "Display"]
+            if (!func) {
+                func = data.defaultDisplay
+            }
+            $('.content').empty().append(func(d, f))
+        }
+    }
+}
+
+function loadSidebar() {
+    var h = $('.sidebar')
+    h.append($('<div class="me"/>').append($('<img/>').attr('src', 'me.png').attr('width', '90px')))
+    
+    var d = $('<div class="links block"/>')
+    d.append($('<div class="header"/>').text("links"))
+    foreach(links, function (v, k) {
+        if (!k.match(/Display$/)) {
+            d.append($('<div/>').append($('<a/>').attr('href', v).text(k)))
+        }
+    })
+    h.append(d)
+    
+    var d = $('<div class="lists block"/>')
+    d.append($('<div class="header"/>').text("lists"))
+    var lists = []
+    lists.push("odesk work")
+    foreach(data, function (_, k) {
+        if (!k.match(/Display$/))
+            lists.push(k)
+    })
+    lists.push("music")
+    
+    foreach(lists, function (e) {
+        d.append($('<div/>').append($('<a/>').attr('href', '#').text(e).click(function () {
+            loadFragment(e.replace(/ /g, '-'))
+            return false
+        })))
+    })
+    h.append(d)
+}
+
+$(function () {
+    loadSidebar()
+    
+    $(window).hashchange(function () {
+        loadFragment(getFragment())
+    }).hashchange()
+})
+
+</script>
+
+<table class="fill">
+    <tr>
+        <td valign="top" width="200px">
+            <div class="sidebar"></div>
+        </td>
+        <td valign="top">
+            <div class="content fill"></div>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

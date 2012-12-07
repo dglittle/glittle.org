@@ -1,0 +1,203 @@
+<html>
+<head> 
+<title>game</title>
+
+<style>
+
+table {
+    border-collapse: collapse;
+}
+th, td {
+    padding: 0;
+}
+body {
+    font-family: Sans-Serif;
+}
+
+</style>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="myutil.js"></script>
+<script>
+
+function drawGame() {
+    var maxCard = 4
+    var betValues = [1, 3]
+    var maxBet = betValues.length
+    
+    var you = 0
+    var comp = 1
+    var golds = [100, 100]
+    var names = ["you", "nemesis"]
+    
+    var round = 0
+    var turn, cards, bets
+    
+    var d = $('<div/>')
+    var log = $('<div style="width:300px;height:300px;border:1px solid black;overflow:auto"/>')
+    d.append(log)
+    var status = $('<div><div>you: <span class="1"/> gold</div><div>' + names[comp] + ': <span class="2"/> gold</div></div>')
+    d.append(status)
+    
+    var goldSpans = [status.find('.1'), status.find('.2')]
+    
+    function print(x) {
+        if (typeof x == "string")
+            log.append($('<div/>').html(x))
+        else
+            log.append(x)
+        log.prop('scrollTop', log.prop('scrollHeight'))
+    }
+    
+    function drawCard(c, player) {
+        return '<span style="color:red"><b>' + (c == 0 ? 'J' : c == 1 ? 'Q' : c == 2 ? 'K' : 'A') + '</b>&#10084;</span>'
+    }
+    
+    setTimeout(function () {
+        startRound()
+    }, 0)
+    
+    var onLeft = function () {}
+    var onRight = function () {}
+    $(document).keydown(function (e) {
+        if (e.which == 37) {
+            onLeft()
+        }
+        if (e.which == 39) {
+            onRight()
+        }
+    })
+
+    function startRound() {
+        goldSpans[you].text(golds[you])
+        goldSpans[comp].text(golds[comp])
+        onLeft = onRight = function () {
+            buttons.remove()
+            round++
+            cards = [randomIndex(maxCard), randomIndex(maxCard)]
+            while (cards[0] == cards[1]) {
+                cards[1] = randomIndex(maxCard)
+            }
+            bets = [0, 0]
+            turn = round % 2
+            
+            print('&nbsp;')
+            print('round ' + round)
+            print('both players put in ' + betValues[bets[0]] + ' gold')
+            print('you are dealt a ' + drawCard(cards[you], you))
+            
+            firstPlayerBets()
+        }
+        var buttons = $('<div/>').append($('<button/>').text('\u2190 play \u2192').click(onLeft))
+        print(buttons)
+    }
+    
+    function firstPlayerBets() {
+        if (comp == turn) {
+            if (Math.random() < 0.5) {
+                bets[comp] = {"0":0,"1":0,"2":0,"3":1}[cards[comp]]
+            } else {
+                bets[comp] = {"0":1,"1":0,"2":0,"3":1}[cards[comp]]
+            }
+            afterFirstPlayerBets()
+        } else {
+            onLeft = function () {
+                buttons.remove()
+                bets[you] = 0
+                afterFirstPlayerBets()
+            }
+            onRight = function() {
+                buttons.remove()
+                bets[you] = 1
+                afterFirstPlayerBets()
+            }
+            var buttons = $('<div/>').text('it\'s your turn').
+                append($('<button/>').text('\u2190 call').click(onLeft)).
+                append($('<button/>').text('raise \u2192').click(onRight))
+            print(buttons)
+        }
+    }
+    
+    function showdown() {
+        print(names[comp] + ': has a ' + drawCard(cards[comp], comp))
+        if (cards[turn] > cards[1 - turn]) {
+            print(names[turn] + ': wins ' + betValues[bets[0]] + ' gold')
+            golds[1 - turn] -= betValues[bets[0]]
+            golds[turn] += betValues[bets[0]]
+        } else if (cards[turn] < cards[1 - turn]) {
+            print(names[1 - turn] + ': wins ' + betValues[bets[0]] + ' gold')
+            golds[turn] -= betValues[bets[0]]
+            golds[1 - turn] += betValues[bets[0]]
+        } else {
+            throw "how did this happen?"
+        }
+        startRound()
+    }
+    
+    function afterFirstPlayerBets() {
+        if (bets[turn] == 0) {
+            print(names[turn] + ': calls')
+            showdown()
+        } else {
+            print(names[turn] + ': raises the bet by ' + (betValues[bets[turn]] - betValues[bets[1 - turn]]) + ' gold')
+            secondPlayerBets()
+        }
+    }
+    
+    function secondPlayerBets() {
+        turn = (turn + 1) % 2
+        if (comp == turn) {
+            var call
+            if (Math.random() < 0.75) {
+                call = {"0":false,"1":false,"2":false,"3":true}[cards[comp]]
+            } else {
+                call = {"0":false,"1":true,"2":true,"3":true}[cards[comp]]
+            }
+            if (call) {
+                bets[comp] = bets[you]
+            }
+            afterSecondPlayerBets()
+        } else {
+            onLeft = function () {
+                buttons.remove()
+                afterSecondPlayerBets()
+            }
+            onRight = function() {
+                buttons.remove()
+                bets[you] = bets[comp]
+                afterSecondPlayerBets()
+            }
+            var buttons = $('<div/>').text('it\'s your turn ').
+                append($('<button/>').text('\u2190 fold').click(onLeft)).
+                append($('<button/>').text('call \u2192').click(onRight))
+            print(buttons)
+        }
+    }
+    
+    function afterSecondPlayerBets() {
+        if (bets[turn] < bets[1 - turn]) {
+            print(names[turn] + ': folds')
+            print(names[1 - turn] + ': wins ' + betValues[bets[turn]] + ' gold')
+            golds[turn] -= betValues[bets[turn]]
+            golds[1 - turn] += betValues[bets[turn]]
+            startRound()
+        } else {
+            print(names[turn] + ': calls')
+            showdown()
+        }
+    }
+
+    return d
+}
+
+$(function () {
+    $('#game').append(drawGame())
+})
+
+</script>
+</head>
+<body>
+<div id="game" style="width:300px;">
+</div>
+</body>
+</html>
+

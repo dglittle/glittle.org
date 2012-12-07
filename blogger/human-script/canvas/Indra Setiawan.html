@@ -1,0 +1,42 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+	<!-- include jquery -->
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+	<script type="text/javascript">
+	$(function(){
+		// add a 400x400 canvas to the body
+		var canvas1_html = '<canvas id="canvas1" width="400" height="400"></canvas>';
+		$('body').append(canvas1_html);
+		var canvas1 = $('#canvas1');
+
+		// draw a 400x400 filled black circle in it
+		var ctx1 = canvas1[0].getContext('2d');
+		ctx1.beginPath();
+		ctx1.arc(200, 200, 200, 0, Math.PI * 2, true);
+		ctx1.closePath();
+		ctx1.fill();
+
+		// add another 400x400 canvas to the body...
+		var canvas2_html = '<canvas id="canvas2" width="400" height="400"></canvas>';
+		$('body').append(canvas2_html);
+		var canvas2 = $('#canvas2');
+
+		// ...overlayed on top of the first one
+		canvas1.css('position', 'absolute');
+		canvas2.css('position', 'absolute');
+
+		// draw a 200x200 filled red circle in it
+		var ctx2 = canvas2[0].getContext('2d');
+		ctx2.beginPath();
+		ctx2.arc(200, 200, 100, 0, Math.PI * 2, true);
+		ctx2.closePath();
+		ctx2.fillStyle = '#ff0000';
+		ctx2.fill();
+
+		// put a 1px solid black border around the bottom canvas
+		canvas1.css({border: '1px solid #000'})
+	})
+	</script>
+</head>
+<body>
+
+<canvas id="canvas1" width="400" height="400" style="position: absolute; border: 1px solid rgb(0, 0, 0); "></canvas><canvas id="canvas2" width="400" height="400" style="position: absolute; "></canvas></body><link rel="stylesheet" type="text/css" href="data:text/css,"></html>

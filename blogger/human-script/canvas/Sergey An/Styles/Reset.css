@@ -1,0 +1,60 @@
+html, body, div, h1, h2, h3, h4, h5, h6, p, img, dl, dt, dd, ol, ul, li, table, tr, td, form, object, embed, article, aside, canvas, command, details, fieldset, figcaption, figure, footer, group, header, hgroup, legend, mark, menu, meter, nav, output, progress, section, summary, time, audio, video
+{
+    border: 0 none;
+    margin: 0;
+    padding: 0;
+}
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section
+{
+    display: block;
+}
+html
+{
+    background: none repeat scroll 0 0 #FFFFFF;
+    direction: ltr;
+    font: 81.25%/1 arial,helvetica,sans-serif;
+}
+a
+{
+    color: #1155CC;
+    text-decoration: none;
+}
+a:active
+{
+    color: #D14836;
+}
+a:hover
+{
+    text-decoration: underline;
+}
+h1, h2, h3, h4, h5, h6
+{
+    font-size: 1.54em;
+    font-weight: normal;
+    line-height: 24px;
+    margin: 0 0 0.46em;
+}
+p
+{
+    line-height: 17px;
+    margin: 0 0 1em;
+}
+ol, ul
+{
+    line-height: 17px;
+    list-style: none outside none;
+    margin: 0 0 1em;
+}
+li
+{
+    margin: 0 0 0.5em;
+}
+table
+{
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+strong
+{
+    color: #222222;
+}

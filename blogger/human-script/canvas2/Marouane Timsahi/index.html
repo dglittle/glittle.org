@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- Programmed by : Marouane Timsahi (22/10/2012)-->
+	<!-- if you want to use the external jquery file from google server uncomment the line below i (it's faster!)-->
+	<!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>-->
+	<!-- if you want to not use the server-local jquery file (v1.8.2) comment the line below-->
+	<script type="text/javascript" src="jquery.min.js"></script>
+<title>output</title>
+<script>
+window.onload = function(){
+//
+//Variables And functions ..
+//
+var mos=document.getElementById("mouse");
+var t=document.getElementById("top");
+var b=document.getElementById("bottom");
+var ctxt=t.getContext("2d");
+var ctxb=b.getContext("2d");
+ctxt.drawImage(mos,0,0,21,21);
+var Xclick = new Array();
+var Yclick = new Array();
+var Drags = new Array();
+var draw;
+
+function clicked(x, y, isdragging)
+{
+  Xclick.push(x);
+  Yclick.push(y);
+  Drags.push(isdragging);
+}
+function dodraw(){
+  
+  ctxb.fillStyle = "#FF0000";
+			
+  for(var i=0; i < Xclick.length; i++)
+  {		
+    ctxb.beginPath();
+    if(Drags[i] && i){
+      ctxb.moveTo(Xclick[i-1], Yclick[i-1]);
+     }else{
+       ctxb.moveTo(Xclick[i]-1, Yclick[i]);
+     }
+     ctxb.arc( Xclick[i], Yclick[i], 10, 0, 2 * Math.PI, false );
+     ctxb.closePath();
+     ctxb.fill();
+  }
+}
+
+//
+//Mouse Events ..
+//
+$('#bottom').mousedown(function(e){
+  var mouseX = e.pageX - $(this).offset().left;
+  var mouseY = e.pageY - $(this).offset().top;
+  draw = true;
+  clicked(mouseX, mouseY);
+  dodraw();
+});
+$('#bottom').mousemove(function(e){
+	var mouseX = e.pageX - $(this).offset().left;
+  	var mouseY = e.pageY - $(this).offset().top;
+	$('#top').css({'left':(mouseX-10)+'px','top':(mouseY-10)+'px'});
+	$('#top').show('fast');
+  if(draw){
+    clicked(mouseX, mouseY, true);
+    dodraw();
+  }
+});
+$('#bottom').mouseup(function(e){
+  draw = false;
+});
+$('#bottom').mouseleave(function(e){
+$('#top').hide('fast');
+  draw = false;
+});
+
+}
+</script>
+</head>
+<body>
+<img id="mouse" src="mousecursor.png" style="display:none;" />
+<p>Canvas:</p>
+<div style="width: 400px; height: 400px; position: relative; margin: 0 auto;">
+<canvas id="bottom" width="400px" height="400px" style="position: absolute; border: 1px solid #000;z-index: 2;">failed to load</canvas>
+<canvas id="top" width="20px" height="20px" style="position: absolute; display: none; z-index: 1;">failed to load mouse highlight</canvas>
+</div>
+
+
+
+
+</body>
+</html>

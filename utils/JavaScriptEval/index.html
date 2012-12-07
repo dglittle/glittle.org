@@ -1,0 +1,125 @@
+
+<html>
+<head> 
+<title>JavaScript Eval</title>
+<link rel="StyleSheet" href="https://raw.github.com/dglittle/myutil/master/myutil.css" type="text/css">
+<style>
+
+</style>
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-3118247-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head> 
+<body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="myutil.js"></script>
+<script src="tab.js"></script>
+<script>
+
+function go() {
+    var code = $('.code').val()
+    var input = $('.input').val()
+    try {
+        var __print = []
+        function printNoLn(a) {
+            if ((typeof a) == "object") {
+                a = myJson(a)
+            }
+            __print.push(a)
+        }
+        function print(a) {
+            printNoLn(a)
+            printNoLn('\n')
+        }
+        var result = eval(code)
+        if (__print.length > 0) {
+            result = __print.join("")
+        } else {
+            if (typeof result != "string") {
+                result = myJson(result)
+            }
+        }
+        $('.output').val(result)
+    } catch (e) {
+        $('.output').val('ERROR: ' + e)
+    }
+}
+
+function copyBack() {
+    $('.input').val($('.output').val())
+}
+
+$(function () {
+    if ($('.input').val() == '') {
+        $('.input').val('hello world!')
+    }
+    if ($('.code').val() == '') {
+        $('.code').val('print(input)')
+    }
+    $('.go').click(function() {
+        go()
+    })
+    $('.copyBack').click(function () {
+        copyBack()
+    })
+    $(document).keydown(function (e) {
+        if (e.keyCode == 13 && e.metaKey) {
+            e.preventDefault()
+            go()
+        }
+    })
+})
+
+</script>
+
+<table class="fill">
+    <tr>
+        <td style="width:50%">
+            <table class="fill">
+                <tr style="height:50%">
+                    <td>
+                        <textarea class="code fill"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <textarea class="input fill"></textarea>
+                    </td>
+                </tr>
+            </table>
+        </td>
+        <td>
+            <table class="fill">
+                <tr>
+                    <td>
+                        <button class="go">&gt;</button><br>
+                    </td>
+                </tr>
+                <tr style="height:100%">
+                </tr>
+                <tr>
+                    <td>
+                        <button class="copyBack">&lt;</button><br>
+                    </td>
+                </tr>
+            </table>
+        </td>
+        <td style="width:50%">
+            <textarea class="output fill"></textarea>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
+

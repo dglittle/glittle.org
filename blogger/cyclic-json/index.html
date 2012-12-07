@@ -1,0 +1,203 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>cyclic json</title>
+<style>
+
+.fill {
+    width: 100%;
+    height: 100%;
+}
+
+table {
+    border-collapse: collapse;
+}
+th, td {
+    padding: 0;
+}
+
+ol li {
+    margin-top: 10px;
+}
+
+.subtle {
+    font-size: small;
+    color: grey;
+}
+
+
+</style>
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-3118247-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head> 
+<body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="myutil.js"></script>
+<script src="tab.js"></script>
+<script>
+
+function drawWidget() {
+    JSON.stringifyOld = JSON.stringify
+    JSON.stringify = function (x) {
+        return JSON.stringifyOld(x, null, "    ")
+    }
+    
+    var d = $('<table><tr height="25px" valign="bottom"><td><button class="b">run me</button></td><td><span class="subtle">input output (<span style="color:black">io</span>)</span></td></tr><tr><td><textarea class="t1" style="width:190px;height:275px"/></td><td><textarea class="t2" style="width:190px;height:275px"/></td></tr></table>')
+    
+    var t1 = d.find('.t1').val($('#xcode').text())
+    var t2 = d.find('.t2').val($('#inputOutput').text())
+    d.find('.b').click(function () {
+        try {
+            var io = t2.val()
+            eval($('#code').val())
+            eval(t1.val())
+            t2.val(io)
+        } catch (e) {
+            alert("" + e)
+        }
+    })
+    
+    return d
+}
+
+$(function () {
+    $('#widget').append(drawWidget())
+})
+
+</script>
+
+<div id="widget" style="float:left;width:350px;">
+</div>
+
+<textarea id="xcode" style="display:none">
+x = {}
+// x = recycle(JSON.parse(io))
+
+x.a = "hello"
+x.b = x
+
+io = JSON.stringify(decycle(x))
+</textarea>
+
+<textarea id="inputOutput" style="display:none">
+</textarea>
+
+<textarea id="code" style="float:right;width:350px;height:300px;border:1px dotted grey">
+// public domain
+
+decycle = function(o) {
+    var rootKey = "root_" + Math.round(Math.random() * 1000)
+    var uniqueObj = {}
+    while (true) {
+        try {
+            var objs = []
+            function helper(o, path) {
+                if (typeof(o) == "string" && o.slice(0, rootKey.length) == rootKey)
+                    throw "bad root key"
+                if (typeof(o) == "object" && o) {
+                    if (typeof(o[rootKey]) == "object" && o[rootKey].uniqueObj == uniqueObj) {
+                        return o[rootKey].path
+                    } else {
+                        if (rootKey in o)
+                            throw "bad root key"
+                        var oo = (o instanceof Array) ? [] : {}
+                        o[rootKey] = {
+                            uniqueObj : uniqueObj,
+                            path : path,
+                            newObj : oo
+                        }
+                        objs.push(o)
+                        return oo
+                    }
+                }
+                return o
+            }
+            function helper2(o) {
+                var oo = o[rootKey].newObj
+                var path = o[rootKey].path
+                if (o instanceof Array) {
+                    for (var i = 0; i &lt; o.length; i++) {
+                        oo[i] = helper(o[i], path + '[' + i + ']')
+                    }
+                } else {
+                    for (k in o) {
+                        if (k != rootKey) {
+                            oo[k] = helper(o[k], path + '[' + JSON.stringify(k) + ']')
+                        }
+                    }
+                }
+            }
+            function cleanup() {
+                for (var i = 0; i &lt; objs.length; i++) {
+                    delete objs[i][rootKey]
+                }
+            }
+            
+            var ret = {}
+            ret.cycle_root = rootKey
+            ret[rootKey] = helper(o, rootKey)
+            for (var i = 0; i &lt; objs.length; i++) {
+                helper2(objs[i])
+            }
+            cleanup()
+            return ret
+        } catch (e) {
+            cleanup()
+            if (e == "bad root key") {
+                rootKey += Math.round(Math.random() * 1000)
+            } else {
+                throw e
+            }
+        }
+    }
+}
+
+recycle = function (obj) {
+    // regex adapted from https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
+    var r = /^root(?:_\d+)?(?:\[(?:\d+|\"(?:[^\\\"\u0000-\u001f]|\\([\\\"\/bfnrt]|u[0-9a-zA-Z]{4}))*\")\])*$/
+    
+    if (!obj.cycle_root || !(obj.cycle_root in obj))
+        throw "doesn't look recycle-able"
+    
+    var rootKey = obj.cycle_root
+    function helper(o) {
+        if (typeof(o) == "string" && o.slice(0, rootKey.length) == rootKey) {
+            if (!o.match(r)) throw "I'm afraid to eval: " + o
+            with (obj) {
+                return eval(o)
+            }
+        }
+        if (typeof(o) == "object" && o) {
+            if (o instanceof Array) {
+                for (var i = 0; i &lt; o.length; i++) {
+                    o[i] = helper(o[i])
+                }
+            } else {
+                for (var k in o) {
+                    o[k] = helper(o[k])
+                }
+            }
+        }
+        return o
+    }
+    return helper(obj[rootKey])
+}
+
+</textarea>
+
+<div style="clear:both"></div>
+
+</body>
+</html>
+
