@@ -3,6 +3,7 @@
 <head> 
 <title>JavaScript Eval</title>
 <link rel="StyleSheet" href="https://raw.github.com/dglittle/myutil/master/myutil.css" type="text/css">
+<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/themes/base/jquery-ui.css">
 <style>
 
 </style>
@@ -22,13 +23,37 @@
 </head> 
 <body>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
 <script src="myutil.js"></script>
 <script src="tab.js"></script>
+<script src="jquery.cookie.js"></script>
 <script>
+
+function escapeHtml(str) {
+    var entityMap = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': '&quot;',
+        "'": '&#39;',
+        "/": '&#x2F;'
+    };
+    return str.replace(/[&<>"'\/]/g, function (s) {
+      return entityMap[s];
+    });
+}
 
 function go() {
     var code = $('.code').val()
     var input = $('.input').val()
+    var history = $.cookie("history")
+    if (history)
+      var h = JSON.parse($.cookie("history"))
+    else
+      var h = []
+    if (h[0] != code)
+      h.unshift(code)
+    $.cookie("history", JSON.stringify(h))
     try {
         var __print = []
         function printNoLn(a) {
@@ -55,6 +80,23 @@ function go() {
     }
 }
 
+function showHistory() {
+    var history = $.cookie("history")
+    if (history) {
+        var h = JSON.parse(history).map(escapeHtml)
+        var text = '<p class="historyHolder">' + h.join('</p><p class="historyHolder">') + '</p>'
+        $historyDialog.html(text)
+        $historyDialog.dialog("open")
+        $('p.historyHolder').css('overflow', 'hidden')
+        $('p.historyHolder').css('width', '250px')
+        $('p.historyHolder').css('height', '25px')
+        $('p.historyHolder').click(function(){
+            $('#code').val($(this).text())
+            $("#history").dialog("close");
+        })
+    }
+}
+
 function copyBack() {
     $('.input').val($('.output').val())
 }
@@ -69,6 +111,11 @@ $(function () {
     $('.go').click(function() {
         go()
     })
+    
+    $historyDialog = $('<div id="history" title="History"/>').dialog({ autoOpen: false })
+    
+    $('#historyButton').click(showHistory)
+    
     $('.copyBack').click(function () {
         copyBack()
     })
@@ -88,23 +135,30 @@ $(function () {
             <table class="fill">
                 <tr style="height:50%">
                     <td>
-                        <textarea class="code fill"></textarea>
+                        <label for="output">script</label>
+                        <button class="go">run &gt;</button>
+                        <button id="historyButton">history</button>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <textarea class="input fill"></textarea>
+                        <textarea id="code" class="code fill"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="input">input</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <textarea id="input" class="input fill"></textarea>
                     </td>
                 </tr>
             </table>
         </td>
         <td>
             <table class="fill">
-                <tr>
-                    <td>
-                        <button class="go">&gt;</button><br>
-                    </td>
-                </tr>
                 <tr style="height:100%">
                 </tr>
                 <tr>
@@ -115,7 +169,8 @@ $(function () {
             </table>
         </td>
         <td style="width:50%">
-            <textarea class="output fill"></textarea>
+            <label for="output">output</label><br>
+            <textarea id="output" class="output fill"></textarea>
         </td>
     </tr>
 </table>
