@@ -1,0 +1,16 @@
+ 
+- fork https://github.com/dglittle/glittle.org
+- open "gh-pages" branch
+
+- put these instructions into a new text file in the "humanscript" directory
+- put the attached image in there as well
+
+- open utils/JavaScriptEval
+- run it by loading index.html into a web browser
+
+- make the textareas consume all available space, as shown in the attached image
+- take screenshot verifying this
+- put screenshot in "humanscript/output" directory
+
+- push this to github
+- make a pull request to the original repository
