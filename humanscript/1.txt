@@ -1,0 +1,39 @@
+- fork https://github.com/dglittle/glittle.org
+- open "gh-pages" branch
+
+- if there is not a directory called "humanscript", create one
+- put these instructions into a new text file in the "humanscript" directory
+
+- open utils/JavaScriptEval
+- run it by loading index.html into a web browser
+- put a label over the upper left box that says "script"
+- put a label over the lower left box that says "input"
+- put a label over the right box that says "output"
+- move the ">" button next to the "script" label
+- rename this button "run >"
+- when "run >" is pressed, make the following happen:
+    - get a cookie for this page called "history"
+    - parse the cookie's value as JSON
+    - put result in variable called "h"
+    - if the cookie didn't exist, set h to []
+    - if h[0] is the same as the text in the script textbox, do nothing
+    - if h[0] is different from the text in the script textbox, prepend the current script to h (making it the new h[0], and sliding everything else back)
+    - set the "history" cookie to the JSON version of h
+- add a button next to "run >" called "history"
+- clicking "history" should open a jQuery UI dialog (import jQuery UI from Google's CDN)
+- the dialog should get the value of the "history" cookie, and dislay the values, where each value only takes a single line, and is cut off if it is too long
+- click a line should close the dialog, and put the script associated with that item into the script textbox
+
+- test
+    - load page, should show "print(input)"
+    - press "run >"
+    - change script to "print(input + 'hi')"
+    - press "run >"
+    - press "history"
+    - take screenshot of dialog (should show "print(input + 'hi')" as first option, and "print(input)" as second option)
+    - click second option
+    - take screenshot
+    - put both of these screenshots in "humanscript/output" directory (you may need to create this directory)
+
+- push this to github
+- make a pull request to the original repository 

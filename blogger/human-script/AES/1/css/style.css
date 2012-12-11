@@ -1,0 +1,110 @@
+/* global settings */
+*{
+	padding: 0;
+	margin:0;
+}
+body{
+	font: normal 12px "Helvetica Neue", Helvetica, Arial, sans-serif;
+	color: #000;
+	width:100%;
+}	
+img{
+	border: 0;
+	border-style: none;
+	border-width: 0px;
+	outline: none;
+}
+div{
+	display: block;
+}
+a{
+	outline: 0;
+	text-decoration: none;
+}
+h1, h2, h3, h4, h5, h6 {
+	margin: 0;
+	font-family: inherit;
+}
+p{
+	margin :0;
+	display: block;
+}
+ul, ol {
+	padding: 0;
+	margin: 0;
+}
+li {
+	margin: 0;
+	padding: 0;
+}
+table {
+	border-collapse:separate;
+    border-spacing: 0 20px;
+}
+tr {
+	display: table-row;
+	vertical-align: inherit;
+	border-color: inherit;
+}
+td, th {
+	padding: 0;
+	display: table-cell;
+}
+
+#wrapper{
+	width: 100%;
+	height: auto;
+}
+
+#content{
+	display: block;
+	margin: 50px auto;
+	width: 95%;
+	height: auto;
+}
+
+.aes{
+	margin: 0 auto;
+	height: 100%;
+	width: 100%;
+}
+
+.aes tr{
+	padding: 10px 0;
+}
+
+.ajust_height{
+	height: 50%;
+}
+
+.ajust_height textarea{
+	width: 100%;
+	min-height: 200px;
+	border: 1px solid #dcdcdc;
+	padding: 5px;
+	overflow: hidden;
+	
+}
+.passwordlbl{
+	font: bold 13px arial;
+	padding: 0 10px;
+	display: inline-block;
+	line-height: 30px;
+}
+
+.password{
+	padding: 0 5px;
+	height: 30px;
+	border: 1px solid #dcdcdc;
+	width: 600px;
+}
+
+.btn{
+	cursor: pointer;
+	font: bold 13px arial;
+	display: inline-block;
+	margin-left: 10px;
+	height: 30px;
+	width: 100px;
+	background: #dcdcdc;
+}

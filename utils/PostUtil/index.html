@@ -1,0 +1,88 @@
+<html>
+<head>
+<title>Post Util</title>
+<meta>
+<link rel="stylesheet" type="text/css" href="/js/my.css" />
+</meta>
+<style>
+
+</style>
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-3118247-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+<body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="myutil.js"></script>
+<script src="tab.js"></script>
+<script>
+
+$(function () {
+})
+
+function onPost() {
+    var data = $('#params').val()
+    if (data.match(/^\{/)) {
+        data = eval('(' + data + ')')
+        var newData = []
+        foreach(data, function (v, k) {
+            newData.push(escapeUrl(k) + '=' + escapeUrl(v))
+        })
+        data = newData.join('&')
+    }
+    var iframeString = '<iframe style="width:100%;height:100%" src="poster.html?__url__=' + 
+        escapeXml(escapeUrl($('#url').val())) + '&' + escapeXml(data) + '"></iframe>'
+    $('#output').empty().append(iframeString)
+}
+
+</script>
+
+<table style="width:100%;height:100%">
+    <tr>
+        <td>
+            <table style="width:100%">
+                <tr>
+                    <td align="right">
+                        url:
+                    </td>
+                    <td style="width:100%">
+                        <input id="url" type="text" style="width:100%"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top">
+                        params:
+                    </td>
+                    <td style="width:100%">
+                        <textarea id="params" type="text" rows="4"
+                        style="width:100%"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <button id="doPost" onclick="onPost()">POST</button>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr style="height:100%">
+        <td>
+            <div id="output" style="width:100%;height:100%"></div>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,105 @@
+<html>
+<head>
+<script src='script.js' type='text/javascript'></script>
+</head>
+<body>
+	<div id='prelimtests' style='display:none'>
+		<div id='5am'>
+			<script>
+				var fiveAM = get_5am();
+				document.getElementById('5am').innerHTML = fiveAM.toString();
+			</script>
+		</div>
+		<div id='test1'>
+			<script>
+				var time = get_current_day_time(12,0,0);
+				document.getElementById('test1').innerHTML = time.toString();
+			</script>
+		</div>
+		<div id='test2'>
+			<script>
+				var time = get_time(12,0,0,true);
+				document.getElementById('test2').innerHTML = time.toString();
+			</script>
+		</div>
+		<div id='test3'>
+			<script>
+				var time = get_time(15,30,0,false);
+				document.getElementById('test3').innerHTML = time.toString();
+			</script>
+		</div>
+	</div>
+	<div id='realtests'>
+		<div id='12amtoday'>
+			<script>
+				var compare = get_current_day_time(0,0,0);
+				var actualSixAM = get_time(6,0,0,false);
+				var str = parse_date(compare) + " -&gt; " + parse_date(next_6am(compare));
+				if(next_6am(compare).getTime()==actualSixAM.getTime()) {
+					str += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='color:green'>Success!</span>";
+				}
+				else {
+					str += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='color:red'>Failure.</span>";
+				}
+				document.getElementById('12amtoday').innerHTML = str;
+			</script>
+		</div>
+		<div id='5amtoday'>
+			<script>
+				var compare = get_current_day_time(5,0,0);
+				var actualSixAM = get_time(6,0,0,false);
+				var str = parse_date(compare) + " -&gt; " + parse_date(next_6am(compare));
+				if(next_6am(compare).getTime()==actualSixAM.getTime()) {
+					str += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='color:green'>Success!</span>";
+				}
+				else {
+					str += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='color:red'>Failure.</span>";
+				}
+				document.getElementById('5amtoday').innerHTML = str;
+			</script>
+		</div>
+		<div id='6amtoday'>
+			<script>
+				var compare = get_current_day_time(6,0,0);
+				var actualSixAM = get_time(6,0,0,true);
+				var str = parse_date(compare) + " -&gt; " + parse_date(next_6am(compare));
+				if(next_6am(compare).getTime()==actualSixAM.getTime()) {
+					str += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='color:green'>Success!</span>";
+				}
+				else {
+					str += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='color:red'>Failure.</span>";
+				}
+				document.getElementById('6amtoday').innerHTML = str;
+			</script>
+		</div>
+		<div id='7amtoday'>
+			<script>
+				var compare = get_current_day_time(7,0,0);
+				var actualSixAM = get_time(6,0,0,true);
+				var str = parse_date(compare) + " -&gt; " + parse_date(next_6am(compare));
+				if(next_6am(compare).getTime()==actualSixAM.getTime()) {
+					str += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='color:green'>Success!</span>";
+				}
+				else {
+					str += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='color:red'>Failure.</span>";
+				}
+				document.getElementById('7amtoday').innerHTML = str;
+			</script>
+		</div>
+		<div id='11pmtoday'>
+			<script>
+				var compare = get_current_day_time(23,0,0);
+				var actualSixAM = get_time(6,0,0,true);
+				var str = parse_date(compare) + " -&gt; " + parse_date(next_6am(compare));
+				if(next_6am(compare).getTime()==actualSixAM.getTime()) {
+					str += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='color:green'>Success!</span>";
+				}
+				else {
+					str += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='color:red'>Failure.</span>";
+				}
+				document.getElementById('11pmtoday').innerHTML = str;
+			</script>
+		</div>
+	</div>
+</body>
+</html>

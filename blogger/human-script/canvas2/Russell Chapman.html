@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>World's Smallest Paint App</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
+	<style>
+		#canvascntnr { position:absolute; top:0; left:0; width:400px; height:400px; }
+		#canvas1 { border:1px solid; position:absolute; top:0; left:0; zIndex:1; }
+		#canvas2 { position:absolute; top:0; left:0; zIndex:2; }
+	</style>
+</head>
+<body>
+	<script>
+$(document).ready(function() {
+	var $div = $('<div id="canvascntnr"><canvas width="400" height="400" id="canvas1"/><canvas width="400" height="400" id="canvas2"/></div>').appendTo('body');
+	var $context1 = $('#canvas1')[0].getContext("2d");
+	var $context2 = $('#canvas2')[0].getContext("2d");
+	
+	if((!$context1) || (!$context2)) {
+		alert("Impossible de r�cup�rer le canvas");
+		return;
+	}
+	
+	//draw 10x10 red circle with 50% transparency on top canvas on mousemove
+	$("#canvascntnr").mousemove(
+		function(e) {
+			var pos = getOffsetPosition($('#canvas2'), e);
+			$context2.clearRect(0,0, 400,400);
+			drawCircle($context2, pos.x, pos.y, 10, "rgba(255,0,0,0.5)");
+		}
+	);
+	
+	//draw 10x10 red circle on bottom canvas on click and drag
+	$("#canvascntnr").mousecapture({
+		"down": function(e) {
+			var pos = getOffsetPosition($('#canvas1'), e);
+			drawCircle($context1, pos.x, pos.y, 10, "rgba(255,0,0,1)");
+		},
+		"move": function(e) {
+			var pos = getOffsetPosition($('#canvas1'), e);
+			drawCircle($context1, pos.x, pos.y, 10, "rgba(255,0,0,1)");
+		}
+	});
+	
+	//calc correct canvas drawing position
+	function getOffsetPosition(canvas, e) {
+		var offset = canvas.offset();
+		var xPos = Math.floor(e.pageX - offset.left);
+		var yPos = Math.floor(e.pageY - offset.top);
+		return { x: xPos, y: yPos }
+	}
+	
+	function drawCircle(context, x, y, radius, color) {
+		context.beginPath();
+		context.arc(x,y, radius, 0, Math.PI*2);
+		context.closePath();
+		context.fillStyle = color;
+		context.fill();
+	}
+});
+
+//adapted from http://benanne.net/code/?p=238
+(function ($) {
+	$.fn.mousecapture = function (params) {
+		this.each(function () {
+			$(this).mousedown(function (e) {
+				// mousemove
+				var moveHandler;
+				if (params.move) {
+					moveHandler = function (e) {
+						params.move.call($(this), e);
+					};
+					$(document).mousemove(moveHandler);
+				}
+				// mouseup                
+				var upHandler;
+				var unbind = function () {
+					if (params.move) $(document).unbind("mousemove", moveHandler);
+					$(document).unbind("mouseup", upHandler);
+				};
+				if (params.up) {
+					upHandler = function (e) {
+						unbind();
+						return params.up.call($(this), e);
+					};
+				} else {
+					upHandler = unbind;
+				}
+				$(document).mouseup(upHandler);
+				// mousedown
+				return params.down.call($(this), e);
+			});
+		});
+		return this;
+	};
+})(jQuery);
+	</script>
+	<div id="test" style="position:absolute; top:450px; width:400px;"></div>
+</body>
+</html>

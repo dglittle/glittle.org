@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>Client Demo By Rohit</title>
+</head>
+<body>
+<div style="width:400px;height:400px;position:relative;margin:0 auto;">
+	<div  style="border:1px solid #000000;width:400px;height:400px;z-index:1;position:absolute;" >
+		<canvas id="botom" width="400" height="400"></canvas>
+	</div>
+	<div  style="width:400px;height:400px;z-index:2;position:absolute;" >
+		<canvas id="top" width="400" height="400"></canvas>
+	</div>
+</div>
+<script>
+	var canvasObject;
+	var canvas = document.getElementById( "botom" );
+	ctx = canvas.getContext( "2d" );
+	ctx.lineWidth = 1;
+	ctx.beginPath();
+	ctx.arc( 200, 200, 200, 0, 2 * Math.PI, false );
+	ctx.fillStyle = "#000000";
+	ctx.fill();
+	ctx.strokeStyle = "DarkRed";
+	ctx.stroke();
+
+	var canvas = document.getElementById( "top" );
+	ctx = canvas.getContext( "2d" );
+	ctx.lineWidth = 1;
+	ctx.beginPath();
+	ctx.arc( 200, 200, 100, 0, 2 * Math.PI, false );
+	ctx.fillStyle = "#FF0000";
+	ctx.fill();
+	ctx.strokeStyle = "DarkRed";
+	ctx.stroke();
+</script>
+</body>
+</html>

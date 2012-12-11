@@ -1,0 +1,97 @@
+<script type="text/javascript">
+			function timeRepresent(cmpDate) //get a date object , compare and return a '11pm today' type string.
+			{
+				var cDate=new Date();
+				var hours=cmpDate.getHours();
+				var h_12="am";
+				
+				if(hours>11)
+				{
+					h_12="pm";
+					if(hours>12)
+					{
+						hours-=12;
+					}
+				}
+				if(hours==0)
+				{
+					hours=12;
+				}
+				if(cDate.getDate()==cmpDate.getDate()&&cDate.getMonth()==cmpDate.getMonth())
+				{
+					return hours+h_12+" "+"today";
+				}
+				cDate.setDate(cDate.getDate()+1);
+				if(cDate.getDate()==cmpDate.getDate()&&cDate.getMonth()==cmpDate.getMonth())
+				{
+					return hours+h_12+" "+"tomorrow";
+				}
+				document.write(cmpDate.getDate()+"-"+cmpDate.getMonth());
+			}
+			
+			
+			
+			
+			function next_6am(input)
+			{
+				var hours=0;
+				var word=input.split(" ");
+				var found=word[0].search("am");
+				if(found>-1)  // am hour conversion str to int
+				{
+					hours+=parseInt(word[0].replace("am",""));
+					if(hours==12)
+					hours-=12;
+				}
+				else		 // pm hour conversion str to int
+				{
+					found=word[0].search("pm");
+					if(found>-1)
+					{
+					hours+=parseInt(word[0].replace("pm",""));
+					if(hours!=12)
+					hours+=12;
+					}
+				}
+				
+				if(found<0) // 24-hour time 
+				{
+					hours+=parseInt(word[0]);
+				}
+				if(word[1]=='tomorrow')  // if tomorrow than extra 24 hours
+				{
+					hours+=24;
+				}
+				// hours count from today 12am to current date
+				if(hours<6) 
+				{
+					return "6am today";
+				}
+				else if(hours<30)
+				{
+					return "6am tomorrow";
+				}
+				//enable to extend like 2 days later just from hours/24
+			}
+			
+			
+			// example Area
+			//timeRepresent() example 
+			
+			document.write("<span style='color:red'>timeRepresent() example :</span> <br/>");
+			var myDate=new Date();
+			myDate.setHours(0);
+			document.write("date object of today 12am is "+timeRepresent(myDate)+"<br/>");
+			myDate.setDate(myDate.getDate()+1);
+			myDate.setHours(18);
+			document.write("date object of tomorrow 6pm is "+timeRepresent(myDate)+"<br/>");
+			
+			//next_6am() example
+			
+			document.write("<span style='color:red'>next_6am() example :</span> <br/>");
+			document.write("next_6am of 12am today should be "+next_6am("12am today")+"<br/>");
+			document.write("next_6am of 5am today should be "+next_6am("5am today")+"<br/>");
+			document.write("next_6am of 6am today should be "+next_6am("6am today")+"<br/>");
+			document.write("next_6am of 7am today should be "+next_6am("7am today")+"<br/>");
+			document.write("next_6am of 11pm today should be "+next_6am("11pm today")+"<br/>");
+</script>

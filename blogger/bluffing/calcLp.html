@@ -1,0 +1,144 @@
+<html>
+<head> 
+<title>calc lp</title>
+
+<style>
+
+table {
+    border-collapse: collapse;
+}
+th, td {
+    padding: 0;
+}
+body {
+    font-family: Sans-Serif;
+}
+
+</style>
+
+<script src="jquery.min.js"></script>
+<script src="myutil.js"></script>
+<script>
+
+function calcLinearProgram() {
+    var cards = 4
+    var betValues = [1, 3]
+    var bets = betValues.length
+    
+    function genPlayer1Strats() {
+        var a = [{}]
+        for (var c = 0; c < cards; c++) {
+            var aa = []
+            for (var b = 0; b < bets; b++) {
+                foreach(a, function (v) {
+                    v = clone(v)
+                    v[c] = b
+                    aa.push(v)
+                })
+            }
+            a = aa
+        }
+        return a
+    }
+    
+    function genPlayer2Strats() {
+        var a = [{}]
+        for (var c = 0; c < cards; c++) {
+            for (var b = 1; b < bets; b++) {
+                var aa = []
+                foreach([false, true], function (d) {
+                    foreach(a, function (v) {
+                        v = clone(v)
+                        v[c + "/" + b] = d
+                        aa.push(v)
+                    })
+                })
+                a = aa
+            }
+        }
+        return a
+    }
+    
+    function play(p1s, p2s) {
+        var sum = 0
+        var count = 0
+        for (var c1 = 0; c1 < cards; c1++) {
+            for (var c2 = 0; c2 < cards; c2++) {
+                if (c2 == c1) continue;
+                
+                var b = p1s[c1]
+                if (b == 0 || p2s[c2 + "/" + b]) {
+                    if (c1 > c2) {
+                        sum += betValues[b]
+                    } else if (c1 < c2) {
+                        sum -= betValues[b]
+                    }
+                } else {
+                    sum += betValues[0]
+                }
+                count++
+            }
+        }
+        return sum / count
+    }
+    
+    var p1s = genPlayer1Strats()
+    var p2s = genPlayer2Strats()
+    
+    var s = "Maximize p = p1 + p2"
+    foreach(p1s, function (p1s, i) {
+        s += "+0p1s" + i
+    })
+    foreach(p2s, function (p2s, i) {
+        s += "+0p2s" + i
+    })
+    
+    s += " subject to\n"
+    
+    foreach(p1s, function (p1s, i) {
+        if (i > 0) s += "+"
+        s += "p1s" + i
+    })
+    s += " = 1\n"
+    foreach(p2s, function (p2s) {
+        s += "p1"
+        foreach(p1s, function (p1s, i) {
+            var p = -play(p1s, p2s)
+            if (p >= 0) p = "+" + p
+            s += p + "p1s" + i
+        })
+        s += " <= 10\n"
+    })
+    
+    foreach(p2s, function (p2s, i) {
+        if (i > 0) s += "+"
+        s += "p2s" + i
+    })
+    s += " = 1\n"
+    foreach(p1s, function (p1s) {
+        s += "p2"
+        foreach(p2s, function (p2s, i) {
+            var p = play(p1s, p2s)
+            if (p >= 0) p = "+" + p
+            s += p + "p2s" + i
+        })
+        s += " <= 10\n"
+    })
+    
+    return s
+}
+
+$(function () {
+    $('#lp_button').click(function () {
+        $('#lp_output').val(calcLinearProgram())
+    })
+})
+
+</script>
+</head>
+<body>
+<button id="lp_button">generate linear program</button><br/>
+<textarea id="lp_output" style="width:600px;height:150px"></textarea>
+</body>
+</html>
+

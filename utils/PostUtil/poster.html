@@ -1,0 +1,38 @@
+<html>
+<head>
+<title>Post Util</title>
+<meta>
+<link rel="stylesheet" type="text/css" href="/js/my.css" />
+</meta>
+<style>
+
+</style>
+</head>
+<body>
+<script src="jquery.js"></script>
+<script src="myutil.js"></script>
+<script src="tab.js"></script>
+<script>
+
+$(function () {
+    var params = getUrlParams()
+    var url = params["__url__"]
+    $('#formy').attr('action', url)
+    $('#url').text(url)
+    foreach(params, function (value, key) {
+        if (key == "__url__") return
+        $('#params').append($('<textarea style="color:red" name="' + escapeXml(key) + '"></textarea>').val(value))
+    })
+    //$('#submit').click()
+})
+
+</script>
+
+<span id="url"></span>
+<form id="formy" method="POST">
+    <div id="params"></div>
+    <input id="submit" type="submit"></input>
+</form>
+
+</body>
+</html>

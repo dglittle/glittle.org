@@ -1,0 +1,85 @@
+<html>
+<head>
+<title>Caps Util</title>
+<meta>
+<link rel="stylesheet" type="text/css" href="/js/my.css" />
+</meta>
+<style>
+
+</style>
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-3118247-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+<body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="myutil.js"></script>
+<script src="tab.js"></script>
+<script>
+
+$(function() {
+})
+
+function getSelectedText() {
+    var textarea = $('#text').get()[0]
+    if (textarea.selectionStart == textarea.selectionEnd) {
+        return textarea.value
+    }
+    return textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
+}
+
+function setSelectedText(text) {
+    var textarea = $('#text').get()[0]
+    if (textarea.selectionStart == textarea.selectionEnd) {
+        textarea.value = text
+        return
+    }
+    textarea.value = textarea.value.substring(0, textarea.selectionStart) +
+        text + textarea.value.substring(textarea.selectionEnd)
+}
+
+function ABC() {
+    setSelectedText(getSelectedText().toUpperCase())
+}
+
+function Abc() {
+    setSelectedText(getSelectedText().replace(/\b([a-z])|([a-z])/ig,
+        function (_0, _1, _2) {
+            if (_1) return _1.toUpperCase()
+            return _2.toLowerCase()
+        }))
+}
+
+function abc() {
+    setSelectedText(getSelectedText().toLowerCase())
+}
+
+</script>
+
+<table width="100%" height="100%">
+    <tr>
+        <td>
+            <button onclick="ABC()">ABC</button>
+            <button onclick="Abc()">Abc</button>
+            <button onclick="abc()">abc</button>
+        </td>
+    </tr>
+    <tr height="100%">
+        <td>
+            <textarea id="text" style="width:100%; height:100%"></textarea>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

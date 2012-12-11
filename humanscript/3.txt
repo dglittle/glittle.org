@@ -1,0 +1,15 @@
+- open "gh-pages" branch
+
+- put these instructions into a new text file in the "humanscript" directory
+- put the attached image in there as well
+
+- open utils/JavaScriptEval
+- run index.html in Google Chrome
+- confirm that it look like the attached image
+
+- remove all the whitespace (leave maybe 5 or 10 pixels between the bottom of the textbox and the top of the word "input")
+- take screenshot verifying this running in Chrome
+- put screenshot in "humanscript/output" directory
+
+- push this to github
+- make a pull request to the original repository

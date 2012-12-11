@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Hello World</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+</head>
+<body>
+<script>
+	$(document).ready(function() {
+		var $canvas = $('<canvas/>').attr('width', 400).attr('height', 400).css({position: 'absolute', left: '0', top: '0', border: '1px solid'});
+		var $context = $canvas[0].getContext("2d");
+		$('body').append($canvas);
+		$context.beginPath();
+		$context.arc(200, 200, 200, 0, Math.PI*2);
+		$context.closePath();
+		$context.fillStyle = "#000000";
+		$context.fill();
+		
+		$canvas = $('<canvas/>').attr('width', 400).attr('height', 400).css({position: 'absolute', left: '0', top: '0'});
+		$context = $canvas[0].getContext("2d");
+		$('body').append($canvas);
+		$context.beginPath();
+		$context.arc(200, 200, 100, 0, Math.PI*2);
+		$context.closePath();
+		$context.fillStyle = "#FF0000";
+		$context.fill();
+	});
+</script>
+</body>
+</html>

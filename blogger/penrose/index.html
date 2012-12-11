@@ -1,0 +1,187 @@
+
+<html>
+<head> 
+<title>Penrose Tiling</title>
+<style>
+
+</style>
+
+</head> 
+<body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="myutil.js"></script>
+<script>
+
+var kiteColor = "#FF00FF"
+var dartColor = "#800080"
+
+var kitePoints = [
+    [0, 0],
+    [1, 0],
+    [Math.cos(Math.PI * 2 / 10), Math.sin(Math.PI * 2 / 10)],
+    [Math.cos(Math.PI * 2 / 5), Math.sin(Math.PI * 2 / 5)]]
+
+var dartPoints = [
+    [0, 0],
+    [1, 0],
+    [.618033988749895 * Math.cos(Math.PI * 2 / 10),
+        .618033988749895 * Math.sin(Math.PI * 2 / 10)],
+    [Math.cos(Math.PI * 2 / 5), Math.sin(Math.PI * 2 / 5)]]
+
+///////////
+
+function add(a, b) {
+    return [a[0] + b[0], a[1] + b[1]]
+}
+
+function sub(a, b) {
+    return [a[0] - b[0], a[1] - b[1]]
+}
+
+function con(a) {
+    return [a[0], -a[1]]
+}
+
+function inv(a) {
+    var d = a[0] * a[0] + a[1] * a[1]
+    return [a[0] / d, -a[1] / d] 
+}
+
+function mul(a, b) {
+    return [a[0] * b[0] - a[1] * b[1], a[0] * b[1] + a[1] * b[0]]
+}
+
+function dot(a, b) {
+    return a[0] * b[0] + a[1] * b[1]
+}
+
+function div(a, b) {
+    return mul(a, inv(b))
+}
+
+function transformPoints(v, a, ai, b, bi) {
+    var a0 = v[ai]
+    var b0 = v[bi]
+    var rot = mul(inv(sub(b0, a0)), sub(b, a))
+    return map(v, function f(p) {
+        return add(mul(sub(p, a0), rot), a)
+    })
+}
+
+///////////
+
+function drawCanvas(w, h) {
+    return $('<canvas/>').attr('width', w).attr('height', h)
+}
+
+function drawPoly(g, p, color) {
+    g.beginPath()
+    foreach(p, function (v, i) {
+        if (i == 0) g.moveTo(v[0], v[1])
+        else g.lineTo(v[0], v[1])
+    })
+    g.lineTo(p[0][0], p[0][1])
+    g.strokeStyle = 'black'
+    g.fillStyle = color
+    g.fill()
+    g.stroke()
+}
+
+function placeTiles(c) {
+    var g = c.get()[0].getContext("2d")
+    var w = c.width()
+    var h = c.height()
+    
+    var possibleTiles = []
+    var takenTiles = {}
+    
+    function checkSpot(d) {
+        var key = Math.round(d[0][0] * 1000000) + "," + Math.round(d[0][1] * 1000000) + ":" + Math.round(d[1][0] * 1000000) + "," + Math.round(d[1][1] * 1000000)
+        
+        if (takenTiles[key]) return
+        takenTiles[key] = true
+        return true
+    }
+    
+    function addPossibleKite(d) {
+        possibleTiles.push(function () {
+            return processKite(d)
+        })
+    }
+    
+    function addPossibleDart(d) {
+        possibleTiles.push(function () {
+            return processDart(d)
+        })
+    }
+    
+    function processKite(d) {
+        if (!checkSpot(d)) return
+        
+        drawPoly(g, d, kiteColor)
+    
+        var k
+        addPossibleKite(k = transformPoints(kitePoints, d[1], 0, d[2], 1))
+        addPossibleKite(transformPoints(kitePoints, d[3], 0, d[2], 3))
+        addPossibleDart(transformPoints(dartPoints, d[0], 0, k[2], 3))
+        addPossibleDart(transformPoints(dartPoints, d[0], 0, k[2], 1))
+        return true
+    }
+    
+    function processDart(d) {
+        if (!checkSpot(d)) return
+        
+        drawPoly(g, d, dartColor)
+    
+        addPossibleKite(transformPoints(kitePoints, d[0], 0, d[2], 2))
+        addPossibleDart(transformPoints(dartPoints, d[1], 0, d[2], 1))
+        addPossibleDart(transformPoints(dartPoints, d[3], 0, d[2], 3))
+        return true
+    }
+    
+    var centerX = w / 2
+    var centerY = h / 2
+    var radius = 0.60 * (Math.min(w, h) / 2)
+    addPossibleKite(transformPoints(kitePoints, [centerX - radius, centerY], 0, [centerX + radius, centerY], 2))
+    
+    var timer
+    function go() {
+        var t = possibleTiles.shift()
+        if (t()) {
+            timer = setTimeout(go, 10)
+        } else {
+            go()
+        }
+    }
+    
+    function pauseResume() {
+        if (typeof(timer) == "number") {
+            pause.text('resume')
+            clearTimeout(timer)
+            timer = null
+        } else {
+            pause.text('pause')
+            go()
+        }
+    }
+    var pause = $('<button style="position:absolute;left:0px;top:0px;z-index:1000"/>').click(pauseResume)
+    $('body').append(pause)
+    pauseResume()
+}
+
+$(function () {
+    var b = $('body')
+    var w = b.width()
+    var h = b.height()
+    
+    var c = drawCanvas(w, h)
+    $('body').append(c)
+    
+    placeTiles(c)
+})
+
+</script>
+
+</body>
+</html>
+
