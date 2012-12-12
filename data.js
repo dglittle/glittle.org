@@ -23,7 +23,8 @@ var data = {
         "Java String Editor" : "utils/JavaStringEditor",
         "Web Post Util" : "utils/PostUtil",
         "Caps Util" : "utils/CapsUtil",
-        "HTML Viewer" : "utils/HTML_Viewer"
+        "HTML Viewer" : "utils/HTML_Viewer",
+		"AES Util" : "utils/AES"
     },
     
     servicesDisplay : function (e) {
