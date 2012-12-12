@@ -13,13 +13,19 @@ http.createServer(function (request, response) {
     
     try {
         if (fs.lstatSync(filePath).isDirectory()) {
-            if (!filePath.match(/\/$/)) filePath += "/"
+            if (!filePath.match(/\/$/)) {
+                response.writeHead(302, {
+                    'Location': request.url + '/'
+                });
+                response.end();
+              }
             filePath += 'index.html'
         }
     } catch (e) {}
     
     console.log("getting: " + filePath)
          
+    
     var extname = path.extname(filePath);
     var contentType = 'text/html';
     switch (extname) {
@@ -33,7 +39,7 @@ http.createServer(function (request, response) {
             contentType = 'image/png';
             break;
     }
-     
+    
     path.exists(filePath, function(exists) {
      
         if (exists) {
