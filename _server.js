@@ -18,6 +18,7 @@ http.createServer(function (request, response) {
                     'Location': request.url + '/'
                 });
                 response.end();
+                return;
               }
             filePath += 'index.html'
         }
