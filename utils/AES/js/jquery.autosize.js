@@ -33,14 +33,14 @@
                     wordWrap: 'break-word'
                 }),
                 mirror = $(copy).addClass(className || 'autosizejs')[0],
-                minHeight = $ta.height(),
+                minHeight = $ta.parent.height(),
                 maxHeight = parseInt($ta.css('maxHeight'), 10),
                 active,
                 i = copyStyle.length,
                 boxOffset = $ta.css('box-sizing') === 'border-box' ? $ta.outerHeight() - $ta.height() : 0
 
                 // Opera returns '-1px' when max-height is set to 'none'.
-                maxHeight = maxHeight && maxHeight > 0 ? maxHeight : 9e4;
+                maxHeight = 9e4; //maxHeight && maxHeight > 0 ? maxHeight : 9e4;
 
                 // Using mainly bare JS in this function because it is going
                 // to fire very often while typing, and needs to very efficient.
