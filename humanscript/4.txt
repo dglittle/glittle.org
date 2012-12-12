@@ -1,0 +1,40 @@
+// part 1
+
+- fork https://github.com/dglittle/glittle.org
+- open "gh-pages" branch
+
+- put these instructions in a new file in the "humanscript" directory
+
+// part 2
+
+- note: requires node.js
+- go to the root directory of glittle.org
+- run "node _server.js"
+- load http://localhost:8125/utils/JavaScriptEval in a browser
+- modify _server.js so that this redirects to "http://localhost:8125/utils/JavaScriptEval/" (note the slash at the end)
+- test it
+    - run "node _server.js"
+    - load http://localhost:8125/utils/JavaScriptEval in a browser
+    - verify that you see "http://localhost:8125/utils/JavaScriptEval/" in the address bar
+    - press "run >", and verify that "hello world!" appears in output
+
+// part 3
+
+- run "node _server.js"
+- load http://localhost:8125/utils/AES
+- note that there are two large textareas
+- make it so that when you load or resize the page, these textareas always consume as much space as possible (with a 10px margin from the edge of the page)
+- test it
+    - run "node _server.js"
+    - load http://localhost:8125/utils/AES
+    - make the page small
+    - take a screenshot
+    - make the page big
+    - take a screenshot
+    - put these screenshots in "humanscript/output"
+
+// part 4
+
+- commit and push to github
+- make pull request to original repository
+- respond to this thread saying "done" 
