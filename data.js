@@ -485,6 +485,7 @@ var data = {
 		"The Notebook",
 		"Lost in Translation",
 		"The Hours",
+        "Mean Girls",
 		"Dead Poets Society",
 		"Notting Hill",
 		"Garden State",
