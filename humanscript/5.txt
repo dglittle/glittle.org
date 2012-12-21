@@ -1,0 +1,49 @@
+Task BJPM: Create small JavaScript pad type utility
+
+// part 0
+
+- if you have time to do this task right now, reply-all to this message saying "got it" (only the first person to say "got it" should do it)
+
+- when you log time, use the subject line of this task as the message
+
+// part 1
+
+- fork https://github.com/dglittle/glittle.org
+
+- put these instructions, and the subject line of this message, in a new file in the "humanscript" directory (create this directory if it doesn't exist)
+
+// part 2
+
+- go to glittle.org directory
+- make copy of utils/JavaScriptEval
+- call it jsEval
+- make these changes
+    - remove input box
+    - make script textbox consume 100% height (like the output)
+    - remove the "script" and "output" labels
+    - remove the "history" button
+    - move the "run >" button between the textareas (where the "<" button is, but at the top instead of the bottom)
+    - remove the "<" button
+- watch for any changes to the text in the input box,
+    if there is a change,
+    add a link below the input box that says "get url to this code"
+- if the link "get url to this code" is clicked,
+    navigate to a new url which is the current url + "#" + url-encoded version of the code in the input box
+- when the page loads, check to see if there is a "#" in the url,
+    if so,
+    then put the stuff after it into the input box (and deal with the url-encoding.. not sure if you'll need to decode it)
+
+- test this
+    - run: node _server.js
+    - load http://localhost:8080/utils/jsEval
+    - enter: print("it works!")
+    - click "get url to this code"
+    - press run button
+    - take screenshot (include address bar)
+    - put screenshot in "humanscript/output"
+
+// last part
+
+- commit and push to github
+- make pull request to original repository
+- respond to this thread saying "done" 

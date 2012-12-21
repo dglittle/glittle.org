@@ -1,0 +1,48 @@
+Task TJDM: fix issue of too-big items in a cookie history
+
+// part 0
+
+- if you have time to do this task right now, reply-all to this message saying "got it" (only the first person to say "got it" should do it)
+
+- when you log time, use the subject line of this task as the message
+
+// part 1
+
+- fork https://github.com/dglittle/glittle.org
+
+- put these instructions, and the subject line of this message, in a new file in the "humanscript" directory (create this directory if it doesn't exist)
+
+// part 2
+
+- run: node _server.js
+- load: http://localhost:8080/utils/JavaScriptEval
+- when "run >" is clicked, it may attempt to store something in a history cookie
+    - if so, before storing the cookie, first check how big it would be (be sure to url encode the data, since the cookie will do this)
+    - if it is more than 4k,
+    - try removing the oldest item from the history array and try again
+    - keep trying until all items have been removed from the history array except for the current item
+    - if it looks like it will fit, set the cookie
+    - otherwise,
+        - don't set the cookie,
+        - and add some text next to the history button saying "too big to save"
+            - make the text red
+- if run is clicked, remove the text saying "too big to save" if it is there
+    
+- test this
+    - run: node _server.js
+    - load http://localhost:8080/utils/JavaScriptEval
+    - press run button
+    - enter "5 // " followed by a very long sequence of a's into the text area (more than 4k of them)
+    - press run button
+    - should be "5" in the output
+    - should see text saying it couldn't put it in the history
+    - click history
+    - move window out of way of text saying that it couldn't put something in the history
+    - take screenshot
+    - put screenshot in "humanscript/output"
+
+// last part
+
+- commit and push to github
+- make pull request to original repository
+- respond to this thread saying "done" 

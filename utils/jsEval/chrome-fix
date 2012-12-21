@@ -11,12 +11,6 @@
     height: 100%;
 }
 
-.error {
-    color: red;
-    display: inline-block;
-    margin-left: 3px;
-}
-
 table {
     border-collapse: collapse;
 }
@@ -66,7 +60,6 @@ function escapeHtml(str) {
 }
 
 function go() {
-    $('.error').remove()
     var code = $('.code').val()
     var input = $('.input').val()
     var history = $.cookie("history")
@@ -76,13 +69,7 @@ function go() {
       var h = []
     if (h[0] != code)
       h.unshift(code)
-    while (encodeURI(JSON.stringify(h)).length > 4000) {
-        h.pop()
-    }
-    if (h.length > 0)
-        $.cookie("history", JSON.stringify(h))
-    else
-        message = $('<div class="error">').text('too big to save').insertAfter('#historyButton')
+    $.cookie("history", JSON.stringify(h))
     try {
         var __print = []
         function printNoLn(a) {
