@@ -46,24 +46,11 @@ body {
 <body>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-<script src="myutil.js"></script>
-<script src="tab.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.2/underscore-min.js"></script>
+<script src="https://raw.github.com/dglittle/myutil/master/myutil2.js"></script>
+<script src="https://raw.github.com/dglittle/myutil/master/tab.js"></script>
 <script src="jquery.cookie.js"></script>
 <script>
-
-function escapeHtml(str) {
-    var entityMap = {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': '&quot;',
-        "'": '&#39;',
-        "/": '&#x2F;'
-    };
-    return str.replace(/[&<>"'\/]/g, function (s) {
-      return entityMap[s];
-    });
-}
 
 function go() {
     $('.error').remove()
@@ -86,8 +73,8 @@ function go() {
     try {
         var __print = []
         function printNoLn(a) {
-            if ((typeof a) == "object") {
-                a = myJson(a)
+            if (_.isObject(a)) {
+                a = _.json(a, true)
             }
             __print.push(a)
         }
@@ -100,7 +87,7 @@ function go() {
             result = __print.join("")
         } else {
             if (typeof result != "string") {
-                result = myJson(result)
+                result = _.json(result, true)
             }
         }
         $('.output').val(result)
@@ -135,7 +122,7 @@ $(function () {
         $('.input').val('hello world!')
     }
     if ($('.code').val() == '') {
-        $('.code').val('print(input)')
+        $('.code').val('// now uses _.underscore\nprint(input)')
     }
     $('.go').click(function() {
         go()
