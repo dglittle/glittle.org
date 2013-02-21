@@ -72,7 +72,7 @@ function go() {
     try {
         var __print = []
         function printNoLn(a) {
-            if (_.isObject(a)) {
+            if (typeof(a) == 'object') {
                 a = _.json(a, true)
             }
             __print.push(a)
