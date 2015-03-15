@@ -73,10 +73,9 @@ $(function () {
         console.log('oh no, AJAX badness happened!')
     })
 
-    var m = window.location.href.match(/\/\/(.*?)\.github\.io\/(.*?)\/([^\?#]*)/)
-    db.user = (m && m[1]) || 'dglittle'
-    db.repo = (m && m[2]) || 'self-saver'
-    db.path = (m && m[3]) || 'test.html'
+    db.user = 'dglittle'
+    db.repo = 'glittle.org'
+    db.path = 'scraps.txt'
     
     openFile(main)
 })
@@ -134,7 +133,7 @@ function main() {
     var bottomLeft = $('<div style="width:100%;height:100%"/>').append(input)
     var bottomRight = $('<div style="width:100%;height:100%"/>')
 
-    $('body').append(input)
+    $('body').append(input).append(saveButton)
 
     ace.require("ace/ext/language_tools")
     var editor = ace.edit("input")
