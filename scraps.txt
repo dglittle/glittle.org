@@ -1,5 +1,10 @@
 
 
+$(function () {
+    $('head').append($('<style> html { box-sizing: border-box; } *, *:before, *:after { box-sizing: inherit; } body { margin: 0px } </style>'))
+    $('body').append($('<div/>').text('hello world!'))
+})
+
 function isMobile() {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
 }
