@@ -1,6 +1,4 @@
 
-test
-
 $('body').keydown(function (e) {
     if (e.metaKey) {
         if (e.keyCode == 83) { // s
