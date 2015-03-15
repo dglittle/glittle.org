@@ -1,5 +1,18 @@
 
 
+$('body').keydown(function (e) {
+    if (e.metaKey) {
+        if (e.keyCode == 83) { // s
+            e.preventDefault()
+            // do something
+        }
+        if (e.keyCode == 13) { // enter
+            e.preventDefault()
+            // do something
+        }
+    }
+})
+
 $(function () {
     $('head').append($('<style> html { box-sizing: border-box; } *, *:before, *:after { box-sizing: inherit; } body { margin: 0px } table { border-collapse: collapse; } th, td { padding: 0px; } </style>'))
     
