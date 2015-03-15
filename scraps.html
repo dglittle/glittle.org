@@ -3,19 +3,6 @@
 <meta charset='utf-8'>
 <title>untitled</title>
 <meta name="viewport" content="width=device-width, user-scalable=no">
-<style>
-
-body {
-    margin: 0px;
-}
-table {
-    border-collapse: collapse;
-}
-th, td {
-    padding: 0px;
-}
-
-</style>
 </head>
 <body>
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
@@ -69,6 +56,8 @@ function saveFile(cb) {
 }
 
 $(function () {
+    $('head').append($('<style> html { box-sizing: border-box; } *, *:before, *:after { box-sizing: inherit; } body { margin: 0px } table { border-collapse: collapse; } th, td { padding: 0px; } </style>'))
+    
     $(document).ajaxError(function () {
         console.log('oh no, AJAX badness happened!')
     })
@@ -81,8 +70,6 @@ $(function () {
 })
 
 function main() {
-    $('body').empty()
-    
     var input = $('<div id="input" style="width:100%;height:100%"/>')
 
     var saveButton = $('<button style="position:absolute;top:0px;right:0px;z-index:50"/>').text('save (ctrl-s)').click(function () {
@@ -90,48 +77,6 @@ function main() {
             alert('saved!')
         })
     })
-    var openButton = $('<button/>').text('open').click(function () {
-        var newPath = prompt('open file named:')
-        if (newPath) {
-            db.path = newPath
-            openFile(main)
-        }
-    })
-    var currentFile = $('<span/>').text(db.path)
-
-    var reloadButton = $('<button/>').text('reload (ctrl-enter)').click(function () {
-        if ($('#useDataUrl:checked').length) {
-            bottomRight.empty().append($('<iframe style="width:100%;height:100%" frameBorder="0"/>').attr('src', 'data:text/html;base64,' + Base64.encode(db.text)))
-        } else {
-            bottomRight.empty().append('saving...')
-            saveFile(function () {
-                bottomRight.empty().append('loading...')
-                var url = 'http://' + db.user + '.github.io/' + db.repo + '/' + db.path
-                function done() {
-                    bottomRight.empty().append($('<iframe style="width:100%;height:100%" frameBorder="0"/>').attr('src', url))
-                }
-                var lastWaitTime = 100
-                function wait() {
-                    $.get(url, function (s) {
-                        if (s == db.text) done()
-                        else {
-                            lastWaitTime *= 1.5
-                            bottomRight.empty().append('waiting for github to publish.. ' + (lastWaitTime/1000) + 's till next retry')
-                            setTimeout(wait, lastWaitTime)
-                        }
-                    })
-                }
-                wait()
-            })
-        }
-    })
-    
-    var useDataUrl = $('<label><input id="useDataUrl" type="checkbox" checked>use data url</label>')
-
-    var topLeft = $('<div/>').append(saveButton).append(openButton).append(currentFile)
-    var topRight = $('<div/>').append(reloadButton).append(useDataUrl)
-    var bottomLeft = $('<div style="width:100%;height:100%"/>').append(input)
-    var bottomRight = $('<div style="width:100%;height:100%"/>')
 
     $('body').append(input).append(saveButton)
 
@@ -164,14 +109,8 @@ function main() {
                 e.preventDefault()
                 saveButton.click()
             }
-            if (e.keyCode == 82 || e.keyCode == 13) { // r or enter
-                e.preventDefault()
-                reloadButton.click()
-            }
         }
     })
-
-    // reloadButton.click()
 }
 
 </script>
