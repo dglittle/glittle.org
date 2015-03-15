@@ -85,7 +85,7 @@ function main() {
     
     var input = $('<div id="input" style="width:100%;height:100%"/>')
 
-    var saveButton = $('<button style="position:absolute;top:0px;right:0px;z-index:1000"/>').text('save (ctrl-s)').click(function () {
+    var saveButton = $('<button style="position:absolute;top:0px;right:0px;z-index:50"/>').text('save (ctrl-s)').click(function () {
         saveFile(function () {
             alert('saved!')
         })
@@ -138,7 +138,7 @@ function main() {
     ace.require("ace/ext/language_tools")
     var editor = ace.edit("input")
     editor.setTheme("ace/theme/monokai")
-    // editor.renderer.setShowGutter(false)
+    editor.renderer.setShowGutter(false)
     editor.setShowPrintMargin(false)
     editor.setShowFoldWidgets(false)
     editor.setOptions({
@@ -149,7 +149,7 @@ function main() {
         enableLiveAutocompletion: true
     })
 
-    editor.getSession().setMode("ace/mode/html")
+    editor.getSession().setMode("ace/mode/javascript")
     var onChange = function () {}
     editor.on('input', function () {
         onChange(editor.getSession().getValue())
