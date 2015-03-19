@@ -1,0 +1,35 @@
+<html><head><meta charset="utf-8"><meta name="viewport" content="initial-scale=1.0" /></head><body>
+<script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+<script src="http://dglittle.github.io/gl519/index.js"></script>
+<script>
+
+$(function () {
+    $('head').append($('<style> html { box-sizing: border-box; } *, *:before, *:after { box-sizing: inherit; } body { margin: 0px } table { border-collapse: collapse; } th, td { padding: 0px; } </style>'))
+
+	$(document).ajaxError(function () {
+		console.log('oh no, AJAX badness happened!')
+	})
+
+    $.ajax({
+        type : 'GET',
+        url : 'https://api.github.com/repos/dglittle/glittle.org/contents/img',
+        success : function (x) {
+        	_.each(x, function (x) {
+        		if (x.name.match(/\.(png|jpg)$/)) {
+        			console.log(x.name)
+        			var d = $('<div style="width:256px;height:256px;border:1px solid black;float:left"/>')
+        			$('body').append(d)
+        			var i = new Image()
+        			i.onload = function () {
+        				d.append(i)
+        			}
+        			i.src = 'http://glittle.org/img/' + x.name
+        		}
+        	})
+        }
+    })
+    
+    $('body').append($('<div/>').text('hello world!'))
+})
+
+</script></body></html>
