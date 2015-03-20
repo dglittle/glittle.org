@@ -7,10 +7,38 @@
 <script type="text/javascript" src="fancybox/jquery.fancybox.pack.js"></script>
 <script>
 
+;(function () {
+    var loading = 0
+    var loadingMax = 10
+    var queue = []
+
+    function load(src, cb) {
+        loading++
+        var i = new Image()
+        i.onload = function () {
+            loading--
+            tryLoad()
+            cb(i)
+        }
+        i.src = src
+    }
+
+    function tryLoad() {
+        while (loading < loadingMax && queue.length) {
+            var x = queue.shift()
+            load(x.src, x.cb)
+        }
+    }
+
+    queueImage = function (src, cb) {
+        queue.push({ src : src, cb : cb })
+        tryLoad()
+    }
+})();
+
 function drawImage(src, size) {
     var d = $('<div style="width:' + size + 'px;height:' + size + 'px;float:left"/>')
-    var i = new Image()
-    i.onload = function () {
+    queueImage(src, function (i) {
         var w = i.naturalWidth
         var h = i.naturalHeight
         var x = 0
@@ -29,8 +57,7 @@ function drawImage(src, size) {
             'background-size' : w + 'px ' + h + 'px',
             'background-position' : x + 'px ' + y + 'px'
         })
-    }
-    i.src = src
+    })
     d.click(function () {
         $.fancybox({
             href : src,
@@ -59,13 +86,23 @@ $(function () {
 
     $.ajax({
         type : 'GET',
-        url : 'https://api.github.com/repos/dglittle/glittle.org/contents/images',
+        url : 'https://api.github.com/repos/dglittle/glittle.org/contents/',
         success : function (x) {
-        	_.each(x, function (x) {
-        		if (x.name.match(/\.(png|jpg)$/)) {
-                    $('body').append(drawImage('http://glittle.org/images/' + x.name, size))
-        		}
-        	})
+            x = _.find(x, function (x) { return x.name == 'images' })
+            $.ajax({
+                type : 'GET',
+                url : 'https://api.github.com/repos/dglittle/glittle.org/git/trees/' + x.sha + '?recursive=1',
+                success : function (x) {
+                    x = _.filter(x.tree, function (x) {
+                        return x.path && x.path.match(/\.(png|jpg)$/)
+                    })
+                    x = _.sort(x, function (x) { return x.path }, true)
+
+                    _.each(x, function (x) {
+                        $('body').append(drawImage('http://glittle.org/images/' + x.path, size))
+                    })
+                }
+            })
         }
     })
 })
