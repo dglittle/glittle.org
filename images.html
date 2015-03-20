@@ -1,7 +1,45 @@
-<html><head><meta charset="utf-8"><meta name="viewport" content="initial-scale=1.0" /></head><body>
+<html><head>
+<meta charset="utf-8"><meta name="viewport" content="initial-scale=1.0" />
+<link rel="stylesheet" href="fancybox/jquery.fancybox.css" type="text/css" media="screen" />
+</head><body>
 <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
 <script src="http://dglittle.github.io/gl519/index.js"></script>
+<script type="text/javascript" src="fancybox/jquery.fancybox.pack.js"></script>
 <script>
+
+function drawImage(src, size) {
+    var d = $('<div style="width:' + size + 'px;height:' + size + 'px;float:left"/>')
+    var i = new Image()
+    i.onload = function () {
+        var w = i.naturalWidth
+        var h = i.naturalHeight
+        var x = 0
+        var y = 0
+        if (w > h) {
+            w = (w/h) * size
+            h = size
+            x = -(w - h) / 2
+        } else {
+            h = size / (w/h)
+            w = size
+            y = -(h - w) / 2
+        }
+        d.css({
+            'background-image' : 'url(' + src + ')',
+            'background-size' : w + 'px ' + h + 'px',
+            'background-position' : x + 'px ' + y + 'px'
+        })
+    }
+    i.src = src
+    d.click(function () {
+        $.fancybox({
+            href : src,
+            openEffect : 'none',
+            closeEffect : 'none'
+        })
+    })
+    return d
+}
 
 $(function () {
     $('head').append($('<style> html { box-sizing: border-box; } *, *:before, *:after { box-sizing: inherit; } body { margin: 0px } table { border-collapse: collapse; } th, td { padding: 0px; } </style>'))
@@ -10,26 +48,26 @@ $(function () {
 		console.log('oh no, AJAX badness happened!')
 	})
 
+    $('.fancybox').fancybox()
+
+    var w = window.innerWidth
+    var h = window.innerHeight
+    var size = 1000000
+    for (var i = 3; size > 128; i++) {
+        size = w / i
+    }
+
     $.ajax({
         type : 'GET',
-        url : 'https://api.github.com/repos/dglittle/glittle.org/contents/img',
+        url : 'https://api.github.com/repos/dglittle/glittle.org/contents/images',
         success : function (x) {
         	_.each(x, function (x) {
         		if (x.name.match(/\.(png|jpg)$/)) {
-        			console.log(x.name)
-        			var d = $('<div style="width:256px;height:256px;border:1px solid black;float:left"/>')
-        			$('body').append(d)
-        			var i = new Image()
-        			i.onload = function () {
-        				d.append(i)
-        			}
-        			i.src = 'http://glittle.org/img/' + x.name
+                    $('body').append(drawImage('http://glittle.org/images/' + x.name, size))
         		}
         	})
         }
     })
-    
-    $('body').append($('<div/>').text('hello world!'))
 })
 
 </script></body></html>
