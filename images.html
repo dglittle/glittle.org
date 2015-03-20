@@ -20,6 +20,10 @@
             tryLoad()
             cb(i)
         }
+        i.onerror = function () {
+            loading--
+            tryLoad()
+        }
         i.src = src
     }
 
