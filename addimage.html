@@ -1,0 +1,23 @@
+
+<html><head><meta charset="utf-8"><meta name="viewport" content="initial-scale=1.0" /></head><body>
+<script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+<script src="http://dglittle.github.io/gl519/index.js"></script>
+<script>
+
+$(function () {
+    $('head').append($('<style> html { box-sizing: border-box; } *, *:before, *:after { box-sizing: inherit; } body { margin: 0px } table { border-collapse: collapse; } th, td { padding: 0px; } </style>'))
+    
+    $('body').append($('<div/>').text('hello world!'))
+    $('body').append($('<input type="file"/>').change(function () {
+        var x = $(this)[0].files[0]
+        console.log(x)
+    }))
+    
+    
+    // $()
+    
+    
+    // var selectedFile = $('#input')[0].files[0];
+})
+
+</script></body></html>
