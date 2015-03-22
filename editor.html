@@ -3,19 +3,6 @@
 <meta charset='utf-8'>
 <title>untitled</title>
 <meta name="viewport" content="width=device-width, user-scalable=no">
-<style>
-
-body {
-    margin: 0px;
-}
-table {
-    border-collapse: collapse;
-}
-th, td {
-    padding: 0px;
-}
-
-</style>
 </head>
 <body>
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
@@ -69,6 +56,8 @@ function saveFile(cb) {
 }
 
 $(function () {
+    $('head').append($('<style> html { box-sizing: border-box; } *, *:before, *:after { box-sizing: inherit; } body { margin: 0px } table { border-collapse: collapse; } th, td { padding: 0px; } </style>'))
+    
     $(document).ajaxError(function () {
         console.log('oh no, AJAX badness happened!')
     })
