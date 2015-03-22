@@ -2,22 +2,189 @@
 <html><head><meta charset="utf-8"><meta name="viewport" content="initial-scale=1.0" /></head><body>
 <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
 <script src="http://dglittle.github.io/gl519/index.js"></script>
+<script src="http://dglittle.github.io/github-oauth/index.js"></script>
 <script>
+
+function saveFile(path, base64content, cb) {
+    github_oauth('repo', function (x) {
+        $.ajax({
+            type : 'PUT',
+            url : 'https://api.github.com/repos/dglittle/glittle.org/contents/' + path + '?access_token=' + x,
+            data : _.json({
+                path : '/' + path,
+                message : 'my commit message',
+                content : base64content
+            }),
+            success : function (x) {
+                cb()
+            }
+        })
+    })
+}
+
+function incPath(path) {
+    function inc000(x) {
+        var y = '' + (1*x + 1)
+        while (y.length < x.length) y = '0' + y
+        return y
+    }
+    function inc(x) {
+        var m = x.match(/^(.*?)(\d*)$/)
+        if (m[2].length > 0 && !m[2].match(/^9+$/)) return m[1] + inc000(m[2])
+        return m[0] + '_001'
+    }
+    var m = path.match(/(.*?\/)([^\/]+)(\.(\w+))$/)
+    return m[1] + inc(m[2]) // + m[3]
+}
+
+function getNextPath(cb) {
+    $.ajax({
+        type : 'GET',
+        url : 'https://api.github.com/repos/dglittle/glittle.org/contents/',
+        success : function (x) {
+            x = _.find(x, function (x) { return x.name == 'images' })
+            $.ajax({
+                type : 'GET',
+                url : 'https://api.github.com/repos/dglittle/glittle.org/git/trees/' + x.sha + '?recursive=1',
+                success : function (x) {
+                    x = _.filter(x.tree, function (x) {
+                        return x.path && x.path.match(/\.(png|jpg)$/)
+                    })
+                    x = _.sort(x, function (x) { return x.path }, true)
+                    cb(incPath('images/' + x[0].path))
+                }
+            })
+        }
+    })
+}
 
 $(function () {
     $('head').append($('<style> html { box-sizing: border-box; } *, *:before, *:after { box-sizing: inherit; } body { margin: 0px } table { border-collapse: collapse; } th, td { padding: 0px; } </style>'))
     
     $('body').append($('<div/>').text('hello world!'))
     $('body').append($('<input type="file"/>').change(function () {
-        var x = $(this)[0].files[0]
-        console.log(x)
+        var f = $(this)[0].files[0]
+        
+        var r = new FileReader()
+        r.onload = function (e) {
+            var m = e.target.result.match(/\/(jpeg|png);base64,(.*)/)
+            var ext = m[1] == 'jpeg' ? 'jpg' : m[1]
+            var base64content = m[2]
+            
+            $('body').append($('<button/>').text('put on github').click(function () {
+                var b = $(this)
+                b.text('putting on github...')
+                getNextPath(function (path) {
+                    saveFile(path + '.' + ext, base64content, function () {
+                        b.text('done putting on github.')
+                    })
+                })
+            }))
+            
+            $('body').append($('<button/>').text('put on facebook').click(function () {
+                var b = $(this)
+                b.text('putting on facebook...')
+                initFacebook(190330191051987)
+                postImageToFacebook(atob(base64content), ext, 'http://glittle.org/images.html')
+            }))
+            
+        }
+        r.readAsDataURL(f)
     }))
-    
-    
-    // $()
-    
-    
-    // var selectedFile = $('#input')[0].files[0];
 })
+
+///////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
+
+function initFacebook(appId) {
+    var callbacks = []
+
+    $('body').prepend($('<div id="fb-root"></div>'))
+    $.ajaxSetup({ cache: true });
+    $.getScript('//connect.facebook.net/en_UK/all.js', function(){
+        FB.init({
+            appId: appId,
+        });     
+        $('#loginbutton,#feedbutton').removeAttr('disabled');
+        // FB.getLoginStatus(updateStatusCallback);
+
+        _.each(callbacks, function (f) { f() })
+        callbacks = null
+    });
+
+    waitForFacebook = function (func) {
+        if (!callbacks) func()
+        else callbacks.push(func)
+    }
+}
+
+function drawTwitterButton(message) {
+    if (!message) message = document.title
+    var d = $('<div/>').append($('<a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>').attr('data-text', message))
+    setTimeout(function () {
+        if ((typeof twttr) != 'undefined')
+            twttr.widgets.load()
+    }, 0)
+    return d
+}
+
+function drawFacebookButton() {
+    var d = $('<div/>').append($('<div class="fb-like" data-href="' + location.href + '" data-layout="button_count" data-action="like" data-show-faces="true" data-share="false"></div>'))
+    setTimeout(function () {
+        waitForFacebook(function () {
+            FB.XFBML.parse()
+        })
+    }, 0)
+    return d
+}
+
+function postImageToFacebook(imageData, imageExt, message) {
+    function doPost() {
+        var authToken = FB.getAuthResponse()['accessToken']
+        var filename = 'image.' + imageExt
+        var mimeType = imageExt == 'jpg' ? 'image/jpeg' : 'image/png'
+
+        var boundary = '----ThisIsTheBoundary1234567890'
+        var formData = '--' + boundary + '\r\n'
+        formData += 'Content-Disposition: form-data; name="source"; filename="' + filename + '"\r\n'
+        formData += 'Content-Type: ' + mimeType + '\r\n\r\n'
+        formData += imageData
+        formData += '\r\n'
+        formData += '--' + boundary + '\r\n'
+        formData += 'Content-Disposition: form-data; name="message"\r\n\r\n'
+        formData += message + '\r\n'
+        formData += '--' + boundary + '--\r\n'
+        
+        var xhr = new XMLHttpRequest()
+        xhr.open('POST', 'https://graph.facebook.com/me/photos?access_token=' + authToken, true)
+        xhr.onload = xhr.onerror = function() {
+            console.log(xhr.responseText)
+        }
+        xhr.setRequestHeader("Content-Type", "multipart/form-data; boundary=" + boundary)
+
+        // from: http://stackoverflow.com/a/5303242/945521
+        if (XMLHttpRequest.prototype.sendAsBinary === undefined) {
+            XMLHttpRequest.prototype.sendAsBinary = function(string) {
+                var bytes = Array.prototype.map.call(string, function(c) {
+                    return c.charCodeAt(0) & 0xff;
+                });
+                this.send(new Uint8Array(bytes).buffer);
+            };
+        }
+
+        xhr.sendAsBinary(formData)
+    }
+
+    waitForFacebook(function () {
+        FB.getLoginStatus(function(res) {
+            if (res.status == 'connected') {
+                doPost()
+            } else {
+                FB.login(doPost, { scope : 'publish_stream' })
+            }
+        })
+    })
+}
 
 </script></body></html>
