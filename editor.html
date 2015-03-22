@@ -22,7 +22,7 @@ th, td {
 <script src="http://dglittle.github.io/gl519/index.js"></script>
 <script src="http://dglittle.github.io/gl519/tab.js"></script>
 <script src="http://dglittle.github.io/gl519/aes.js"></script>
-<script src="http://dglittle.github.io/github-access-token-getter/index.js"></script>
+<script src="http://dglittle.github.io/github-oauth/index.js"></script>
 <script src="http://cdn.jsdelivr.net/ace/1.1.8/min/ace.js"></script>
 <script src="http://cdn.jsdelivr.net/ace/1.1.8/min/ext-language_tools.js"></script>
 <script>
@@ -31,7 +31,7 @@ var db = {}
 
 function ensureAccessToken(cb) {
     if (db.access_token) cb()
-    else get_github_access_token('repo', function (x) {
+    else github_oauth('repo', function (x) {
         db.access_token = x
         cb()
     })
