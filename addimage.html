@@ -91,9 +91,14 @@ $(function () {
                 var b = $(this)
                 b.text('putting on facebook...')
                 initFacebook(190330191051987)
-                postImageToFacebook(atob(base64content), ext, 'http://glittle.org/images.html', function () {
-                    b.text('done putting on facebook.')
+                
+                FB.api('/me', function(r) {
+                    $('body').append($('<div/>').text('name: ' + r.name).append($('<img/>').attr('src', 'http://graph.facebook.com/' + r.id + '/picture')))
                 })
+                
+                // postImageToFacebook(atob(base64content), ext, 'http://glittle.org/images.html', function () {
+                //     b.text('done putting on facebook.')
+                // })
             }))
             
             $('body').append($('<button/>').text('log out of facebook').click(function () {
