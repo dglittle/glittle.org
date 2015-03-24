@@ -59,7 +59,7 @@ function getNextPath(cb) {
 }
 
 $(function () {
-    console.log('version 18')
+    console.log('version 19')
     
     $('head').append($('<style> html { box-sizing: border-box; } *, *:before, *:after { box-sizing: inherit; } body { margin: 0px } table { border-collapse: collapse; } th, td { padding: 0px; } </style>'))
     
@@ -97,6 +97,11 @@ $(function () {
                         if (res.status == 'connected') {
                             FB.api('/me', function(r) {
                                 $('body').append($('<div/>').text('name: ' + r.name).append($('<img/>').attr('src', 'http://graph.facebook.com/' + r.id + '/picture')))
+                                
+                                console.log(r)
+                                // postImageToFacebook(atob(base64content), ext, 'http://glittle.org/images.html', function () {
+                                //     b.text('done putting on facebook.')
+                                // })
                             })
                         } else {
                             $('body').append($('<div/>').text('not logged in to facebook'))
@@ -104,10 +109,6 @@ $(function () {
                         }
                     })
                 })
-                
-                // postImageToFacebook(atob(base64content), ext, 'http://glittle.org/images.html', function () {
-                //     b.text('done putting on facebook.')
-                // })
             }))
             
             $('body').append($('<button/>').text('log out of facebook').click(function () {
@@ -172,52 +173,39 @@ function drawFacebookButton() {
     return d
 }
 
-function postImageToFacebook(imageData, imageExt, message, cb) {
-    function doPost() {
-        var authToken = FB.getAuthResponse()['accessToken']
-        var filename = 'image.' + imageExt
-        var mimeType = imageExt == 'jpg' ? 'image/jpeg' : 'image/png'
+function postImageToFacebook(accessToken, imageData, imageExt, message, cb) {
+    var filename = 'image.' + imageExt
+    var mimeType = imageExt == 'jpg' ? 'image/jpeg' : 'image/png'
 
-        var boundary = '----ThisIsTheBoundary1234567890'
-        var formData = '--' + boundary + '\r\n'
-        formData += 'Content-Disposition: form-data; name="source"; filename="' + filename + '"\r\n'
-        formData += 'Content-Type: ' + mimeType + '\r\n\r\n'
-        formData += imageData
-        formData += '\r\n'
-        formData += '--' + boundary + '\r\n'
-        formData += 'Content-Disposition: form-data; name="message"\r\n\r\n'
-        formData += message + '\r\n'
-        formData += '--' + boundary + '--\r\n'
-        
-        var xhr = new XMLHttpRequest()
-        xhr.open('POST', 'https://graph.facebook.com/me/photos?access_token=' + authToken, true)
-        xhr.onload = xhr.onerror = function() {
-            cb(xhr.responseText)
-        }
-        xhr.setRequestHeader("Content-Type", "multipart/form-data; boundary=" + boundary)
+    var boundary = '----ThisIsTheBoundary1234567890'
+    var formData = '--' + boundary + '\r\n'
+    formData += 'Content-Disposition: form-data; name="source"; filename="' + filename + '"\r\n'
+    formData += 'Content-Type: ' + mimeType + '\r\n\r\n'
+    formData += imageData
+    formData += '\r\n'
+    formData += '--' + boundary + '\r\n'
+    formData += 'Content-Disposition: form-data; name="message"\r\n\r\n'
+    formData += message + '\r\n'
+    formData += '--' + boundary + '--\r\n'
+    
+    var xhr = new XMLHttpRequest()
+    xhr.open('POST', 'https://graph.facebook.com/me/photos?access_token=' + accessToken, true)
+    xhr.onload = xhr.onerror = function() {
+        cb(xhr.responseText)
+    }
+    xhr.setRequestHeader("Content-Type", "multipart/form-data; boundary=" + boundary)
 
-        // from: http://stackoverflow.com/a/5303242/945521
-        if (XMLHttpRequest.prototype.sendAsBinary === undefined) {
-            XMLHttpRequest.prototype.sendAsBinary = function(string) {
-                var bytes = Array.prototype.map.call(string, function(c) {
-                    return c.charCodeAt(0) & 0xff;
-                });
-                this.send(new Uint8Array(bytes).buffer);
-            };
-        }
-
-        xhr.sendAsBinary(formData)
+    // from: http://stackoverflow.com/a/5303242/945521
+    if (XMLHttpRequest.prototype.sendAsBinary === undefined) {
+        XMLHttpRequest.prototype.sendAsBinary = function(string) {
+            var bytes = Array.prototype.map.call(string, function(c) {
+                return c.charCodeAt(0) & 0xff;
+            });
+            this.send(new Uint8Array(bytes).buffer);
+        };
     }
 
-    waitForFacebook(function () {
-        FB.getLoginStatus(function(res) {
-            if (res.status == 'connected') {
-                doPost()
-            } else {
-                FB.login(doPost, { scope : 'publish_stream' })
-            }
-        })
-    })
+    xhr.sendAsBinary(formData)
 }
 
 </script></body></html>
