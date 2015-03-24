@@ -59,7 +59,7 @@ function getNextPath(cb) {
 }
 
 $(function () {
-    console.log('version 20')
+    console.log('version 21')
     
     $('head').append($('<style> html { box-sizing: border-box; } *, *:before, *:after { box-sizing: inherit; } body { margin: 0px } table { border-collapse: collapse; } th, td { padding: 0px; } </style>'))
     
@@ -97,13 +97,10 @@ $(function () {
                         if (res.status == 'connected') {
                             FB.api('/me', function(r) {
                                 $('body').append($('<div/>').text('name: ' + r.name).append($('<img/>').attr('src', 'http://graph.facebook.com/' + r.id + '/picture')))
-                                
-                                
-                                
-                                console.log(res)
-                                // postImageToFacebook(atob(base64content), ext, 'http://glittle.org/images.html', function () {
-                                //     b.text('done putting on facebook.')
-                                // })
+                                postImageToFacebook(res.authResponse.accessToken, atob(base64content), ext, 'http://glittle.org/images.html', function (r) {
+                                    b.text('done putting on facebook.')
+                                    console.log(r)
+                                })
                             })
                         } else {
                             $('body').append($('<div/>').text('not logged in to facebook'))
