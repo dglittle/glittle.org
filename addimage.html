@@ -59,7 +59,7 @@ function getNextPath(cb) {
 }
 
 $(function () {
-    console.log('version 19')
+    console.log('version 20')
     
     $('head').append($('<style> html { box-sizing: border-box; } *, *:before, *:after { box-sizing: inherit; } body { margin: 0px } table { border-collapse: collapse; } th, td { padding: 0px; } </style>'))
     
@@ -98,7 +98,9 @@ $(function () {
                             FB.api('/me', function(r) {
                                 $('body').append($('<div/>').text('name: ' + r.name).append($('<img/>').attr('src', 'http://graph.facebook.com/' + r.id + '/picture')))
                                 
-                                console.log(r)
+                                
+                                
+                                console.log(res)
                                 // postImageToFacebook(atob(base64content), ext, 'http://glittle.org/images.html', function () {
                                 //     b.text('done putting on facebook.')
                                 // })
