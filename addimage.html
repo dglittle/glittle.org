@@ -59,7 +59,7 @@ function getNextPath(cb) {
 }
 
 $(function () {
-    console.log('version 22')
+    console.log('version 23')
     
     $('head').append($('<style> html { box-sizing: border-box; } *, *:before, *:after { box-sizing: inherit; } body { margin: 0px } table { border-collapse: collapse; } th, td { padding: 0px; } </style>'))
     
@@ -91,7 +91,6 @@ $(function () {
                 var b = $(this)
                 b.text('putting on facebook...')
                 initFacebook(190330191051987)
-                
                 loginToFacebook(function (accessToken) {
                     FB.api('/me', function(r) {
                         $('body').append($('<div/>').text('name: ' + r.name).append($('<img/>').attr('src', 'http://graph.facebook.com/' + r.id + '/picture')))
@@ -152,7 +151,7 @@ function loginToFacebook(cb) {
                 cb(res.authResponse.accessToken)
             } else {
                 FB.login(function (r) {
-                    console.log(r)
+                    cb(r.authResponse.accessToken)
                 }, { scope : 'publish_stream' })
             }
         })
