@@ -59,7 +59,7 @@ function getNextPath(cb) {
 }
 
 $(function () {
-    console.log('version 21')
+    console.log('version 22')
     
     $('head').append($('<style> html { box-sizing: border-box; } *, *:before, *:after { box-sizing: inherit; } body { margin: 0px } table { border-collapse: collapse; } th, td { padding: 0px; } </style>'))
     
@@ -92,20 +92,13 @@ $(function () {
                 b.text('putting on facebook...')
                 initFacebook(190330191051987)
                 
-                waitForFacebook(function () {
-                    FB.getLoginStatus(function(res) {
-                        if (res.status == 'connected') {
-                            FB.api('/me', function(r) {
-                                $('body').append($('<div/>').text('name: ' + r.name).append($('<img/>').attr('src', 'http://graph.facebook.com/' + r.id + '/picture')))
-                                postImageToFacebook(res.authResponse.accessToken, atob(base64content), ext, 'http://glittle.org/images.html', function (r) {
-                                    b.text('done putting on facebook.')
-                                    console.log(r)
-                                })
-                            })
-                        } else {
-                            $('body').append($('<div/>').text('not logged in to facebook'))
-                            // FB.login(doPost, { scope : 'publish_stream' })
-                        }
+                loginToFacebook(function (accessToken) {
+                    FB.api('/me', function(r) {
+                        $('body').append($('<div/>').text('name: ' + r.name).append($('<img/>').attr('src', 'http://graph.facebook.com/' + r.id + '/picture')))
+                        postImageToFacebook(accessToken, atob(base64content), ext, 'http://glittle.org/images.html', function (r) {
+                            b.text('done putting on facebook.')
+                            console.log(r)
+                        })
                     })
                 })
             }))
@@ -150,6 +143,20 @@ function initFacebook(appId) {
         if (!callbacks) func()
         else callbacks.push(func)
     }
+}
+
+function loginToFacebook(cb) {
+    waitForFacebook(function () {
+        FB.getLoginStatus(function(res) {
+            if (res.status == 'connected') {
+                cb(res.authResponse.accessToken)
+            } else {
+                FB.login(function (r) {
+                    console.log(r)
+                }, { scope : 'publish_stream' })
+            }
+        })
+    })
 }
 
 function drawTwitterButton(message) {
