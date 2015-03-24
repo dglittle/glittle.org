@@ -92,6 +92,17 @@ $(function () {
                 })
             }))
             
+            $('body').append($('<button/>').text('log out of facebook').click(function () {
+                var b = $(this)
+                b.text('logging out of facebook...')
+                initFacebook(190330191051987)
+                waitForFacebook(function () {
+                    FB.logout(function () {
+                        b.text('logged out of facebook.')
+                    })
+                })
+            }))
+            
         }
         r.readAsDataURL(f)
     }))
