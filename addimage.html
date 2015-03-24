@@ -73,6 +73,10 @@ $(function () {
             var ext = m[1] == 'jpeg' ? 'jpg' : m[1]
             var base64content = m[2]
             
+            $('body').append($('<br/>'))
+            $('body').append($('<img style="width:200px;height:200px"/>').attr('src', e.target.result))
+            $('body').append($('<br/>'))
+            
             $('body').append($('<button/>').text('put on github').click(function () {
                 var b = $(this)
                 b.text('putting on github...')
