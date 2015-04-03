@@ -30,6 +30,31 @@ $('body').keydown(function (e) {
     }
 })
 
+function setHash(hash) {
+    window.location.href = window.location.href.replace(/#.*/, '') + '#' + hash
+}
+
+function addStyle(s) {
+    if (!addStyle.cache) addStyle.cache = {}
+    if (addStyle.cache[s]) return
+    addStyle.cache[s] = true
+    $('head').append($('<style> ' + s + ' </style>'))
+}
+
+function addKeyframes(s) {
+    var prefixes = ['-webkit-', '-moz-', '-o-', '-ms-', '']
+    _.each(prefixes, function (prefix) {
+        addStyle(s.replace(/@keyframes/, '@' + prefix + 'keyframes'))
+    })
+}
+
+function addAnimation(d, css) {
+    var prefixes = ['-webkit-', '-moz-', '-o-', '-ms-', '']
+    _.each(prefixes, function (prefix) {
+        d.css(prefix + 'animation', css)
+    })
+}
+
 function isMobile() {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
 }
