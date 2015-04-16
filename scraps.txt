@@ -12,6 +12,14 @@ $(function () {
 
 </script></body></html>
 
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+function leadingZeros(x, size) {
+    x = '' + x
+    while (x.length < size) x = '0' + x
+    return x
+}
 
 $(document).ajaxError(function () {
     console.log('oh no, AJAX badness happened!')
